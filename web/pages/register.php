@@ -1,7 +1,35 @@
 <?php
+require __DIR__ . '/../lib/backend.php';
+
 // Kurt Castro | 9.28
-// still need to connect to backend.php
 // css styling not needed right now
+
+// backend connection
+$msg = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
+    $confirm = $_POST['confirm'];
+
+    if ($email == '' || $username == '' || $password == '' || $confirm == '') {
+	    $msg = 'All fields are required.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+	    $msg = 'Invalid email address.';
+    } elseif (strlen($password) < 10) {
+	    $msg = 'Password must be at least 10 characters.';
+    } elseif ($password !== $confirm) {
+	    $msg = 'Passwords do not match.';
+    } else {
+	    $reply = send_request([
+		    'type' => 'register',
+		    'email' => $email,
+		    'username' => $username,
+		    'password' => $password,
+	    ]);
+	    $msg = $reply['message'];
+    }
+}
 ?>
 
 <!DOCTYPE html>
