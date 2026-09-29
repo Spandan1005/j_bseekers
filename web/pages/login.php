@@ -1,4 +1,5 @@
 <?php
+session_start();
 require __DIR__ . '/../lib/backend.php';
 
 // Kurt Castro | 9.28
@@ -19,7 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		    'password' => $password,
 	    ]);
 	    if ($reply['status'] === 'success') {
+		    session_regenerate_id(true);
 		    $_SESSION['username'] = $username;
+		    $_SESSION['session_key'] = $reply['session_key'];
 		    header('Location: home.php');
 		    exit;
 	    }
