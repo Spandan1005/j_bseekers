@@ -62,6 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="submit" value="Register" />
 </form>
 
+<?php if ($msg): ?>
+  <p><?= htmlspecialchars($msg) ?></p>
+<?php endif; ?>
+
 <script>
 function validate (form) {
 	let email = form.email.value;
