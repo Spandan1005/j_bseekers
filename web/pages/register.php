@@ -78,13 +78,10 @@ function validate (form) {
 		alert("Invalid email format");
 		isValid = false;
 	}
-	if (username.length < 5 || username.length > 20 {
-		alert("Username must be 5-20 characters");
+	if (!/^[a-zA-Z0-9_-]{5,20}$/.test(username)) {
+		alert("Invalid username format");
 		isValid = false;
 	}
-	if (username.includes(" ")) {
-		alert("Username cannot contain spacing");
-		isValid = false;
 	if (password.length < 10) {
 		alert("Password must be at least 10 characters");
 		isValid = false;
