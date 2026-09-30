@@ -1,7 +1,8 @@
 #!/usr/bin/php
 <?php
+$creds = require __DIR__ . '/credentials.php';
 
-$mydb = new mysqli('127.0.0.1','root','12345','testdb');
+$mydb = new mysqli($creds['host'],$creds['user'],$creds['pass'],$creds['db']);
 
 if ($mydb->errno != 0)
 {
@@ -11,7 +12,7 @@ if ($mydb->errno != 0)
 
 echo "successfully connected to database".PHP_EOL;
 
-$query = "select * from students;";
+$query = "select * from users;";
 
 $response = $mydb->query($query);
 if ($mydb->errno != 0)
