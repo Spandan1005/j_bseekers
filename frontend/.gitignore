@@ -1,2 +1,2 @@
-web/vendor/
-web/lib/rabbitmq/testRabbitMQ.ini
+vendor/
+lib/rabbitmq/testRabbitMQ.ini

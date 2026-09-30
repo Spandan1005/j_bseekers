@@ -6,6 +6,12 @@ require __DIR__ . '/../lib/backend.php';
 // Copied from login.php + trimmed
 // In progress
 
+if (empty($_SESSION['session_key'])) {
+	header('Location: login.php');
+	exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +21,8 @@ require __DIR__ . '/../lib/backend.php';
 </head>
 <body>
 <main>
+  <h3>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></h3>
+  <p><a href="logout.php">Log out</a></p>
 
 </main>
 </body>
