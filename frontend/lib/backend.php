@@ -5,7 +5,7 @@ const MQ_DIR = __DIR__ . '/../../RabbitMQ';
 const MQ_INI = 'testRabbitMQ.ini';
 
 //defining requests - Spandan Ptel 9/29/26
-const MQ_Routers = [
+const MQ_ROUTES = [
 'login' => 'loginServer',
 'register' => 'registerServer'];
 
@@ -15,7 +15,7 @@ return ['status' => 'error', 'message' => $message]; } //follows the naming conv
 function send_request(array $payload){
 	$type = $payload['type'] ?? '';
 	if (!isset(MQ_ROUTES[$type])) {
-		return mq_error('Unkown request type. ');
+		return mq_error('Unknown request type.');
 	}
 	$section = MQ_ROUTES[$type];
 
@@ -33,7 +33,7 @@ function send_request(array $payload){
 		return mq_error("Section [$section] is missing from " . MQ_INI); //talks abt a host or a section that could be missing from ini 
 		}
 		$sock = @fsockopen($host, $port, $errno, $errstr, 3); //refering to trying tcp connection
-		if (!sock) {
+		if (!$sock) {
 		return mq_error('Cant reach the message broker right now'); //errpr message for if broker is unreachable
 		}
 		fclose($sock); //clsoing the tcp connection
@@ -50,3 +50,4 @@ function send_request(array $payload){
 		chdir($oldDir); //going back to the og folder
 	}
 
+}
