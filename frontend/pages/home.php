@@ -5,6 +5,7 @@ require __DIR__ . '/../lib/backend.php';
 // Kurt Castro | 9.28
 // Copied from login.php + trimmed
 // In progress
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +16,8 @@ require __DIR__ . '/../lib/backend.php';
 </head>
 <body>
 <main>
+  <h3>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></h3>
+  <p><a href="logout.php">Log out</a></p>
 
 </main>
 </body>
