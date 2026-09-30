@@ -35,15 +35,32 @@ function doRegister($request): array {
 
     $passhash = hash('sha256', $pass);
 
-    echo "received register request:" . PHP_EOL;
-    echo "email: {$email}" . PHP_EOL;
-    echo "user: {$user}" . PHP_EOL;
-    echo "hash: {$passhash}" . PHP_EOL;
+    try {
+        $db = getDB();
+        $query = $db->prepare("insert into users (username, email, password) values (?,?,?)");
+        $stmt->bind_param('sss', $user, $email, $passhash);
+        $stmt->execute();
+        $stmt->close();
+        $db->close();
 
-    return [
-        'status' => 'success',
-        'message' => 'registration success.'
-    ];
+        return [
+            'status' => 'success',
+            'message' => 'registration success.'
+        ];
+    }
+    catch (mysqli_sql_exception $e) {
+        if ($e->getCode === 1062) {
+            return [
+                'status' => 'error',
+                'message' => 'Username or email must be unique.'
+            ];
+        }
+        error_log('doLogin: ' . $e->getMessage());
+        return [
+            'status' => 'error',
+            'message' => 'Unexpected error occurred.'
+        ];
+    }
 }
 
 $server = new rabbitMQServer("testRabbitMQ.ini","registerServer");
