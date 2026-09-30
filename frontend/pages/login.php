@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		    header('Location: home.php');
 		    exit;
 	    }
-	    $msg = $reply['message'];
+	    $msg = 'Invalid username or password.';
     }
 }
 ?>
