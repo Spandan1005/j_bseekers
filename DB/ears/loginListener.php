@@ -23,7 +23,7 @@ function doLogin($request): array {
     try {
 
         $db = getDB();
-        $query = $db->prepare("select email from users where username = ? and password = SHA2(?,256) limit 1");
+        $stmt = $db->prepare("select email from users where username = ? and password = SHA2(?,256) limit 1");
         $stmt->bind_param('ss', $user, $pass);
         $stmt->execute();
         $stmt->bind_result($email);

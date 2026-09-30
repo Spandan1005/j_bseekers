@@ -37,7 +37,7 @@ function doRegister($request): array {
 
     try {
         $db = getDB();
-        $query = $db->prepare("insert into users (username, email, password) values (?,?,?)");
+        $stmt = $db->prepare("insert into users (username, email, password) values (?,?,?)");
         $stmt->bind_param('sss', $user, $email, $passhash);
         $stmt->execute();
         $stmt->close();
