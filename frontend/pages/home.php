@@ -8,6 +8,7 @@ require __DIR__ . '/../lib/backend.php';
 
 if (empty($_SESSION['session_key'])) {
 	header('Location: login.php');
+	exit;
 }
 ?>
 
