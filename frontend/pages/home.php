@@ -5,6 +5,10 @@ require __DIR__ . '/../lib/backend.php';
 // Kurt Castro | 9.28
 // Copied from login.php + trimmed
 // In progress
+
+if (empty($_SESSION['session_key'])) {
+	header('Location: login.php');
+}
 ?>
 
 <!DOCTYPE html>
