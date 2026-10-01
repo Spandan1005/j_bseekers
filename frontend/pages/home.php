@@ -4,11 +4,11 @@ require __DIR__ . '/../lib/backend.php';
 
 // Kurt Castro | 9.28
 // Copied from login.php + trimmed
-// In progress
+// Functioning with log out link
 
-if (empty($_SESSION['session_key'])) {
+if (empty($_SESSION['session_key'])) { // checks for session key, if none then redirects to login
 	header('Location: login.php');
-	exit;
+	exit; // stops rest of the page from sending so home HTML is not visible on login
 }
 ?>
 
@@ -21,6 +21,7 @@ if (empty($_SESSION['session_key'])) {
 </head>
 <body>
 <main>
+  <?php // escapes username to prevent SQL injection or XSS ?>
   <h3>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></h3>
   <p><a href="logout.php">Log out</a></p>
 
