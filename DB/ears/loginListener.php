@@ -1,5 +1,8 @@
 #!/usr/bin/php
 <?php
+// login listener.  listens on loginServer
+// Andrew Galella, written 09.30.2026
+
 // __DIR__ makes sure the file seeks the other files starting from
 // its own starting directory.
 
@@ -8,10 +11,15 @@ require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
 require_once __DIR__ . '/../lib/database.php';
 
+// ^ file ref
 
 function doLogin($request): array {
     $user = trim($request['username']);
     $pass = $request['password'];
+
+    // ^ grab user and pass from client request
+    // make sure fields aren't empty below
+
 
     if ($user === '' || $pass === '') {
         return [
@@ -21,7 +29,9 @@ function doLogin($request): array {
         ];
     }
     try {
-
+        // pull an email address from db assoc with user and pass provided
+        // if email is null, there was no record, return fail
+        // generate 256 bit session key if success, send as hex
         $db = getDB();
         $stmt = $db->prepare("select email from users where username = ? and password = SHA2(?,256) limit 1");
         $stmt->bind_param('ss', $user, $pass);
@@ -44,6 +54,7 @@ function doLogin($request): array {
         ];
     }
     catch (Throwable $e) {
+        // catchall failure
         error_log('doLogin: ' . $e->getMessage());
         return [
             'status' => 'error',
@@ -52,6 +63,8 @@ function doLogin($request): array {
         ];
     }
 }
+
+// open and close listener
 
 $server = new rabbitMQServer("testRabbitMQ.ini","loginServer");
 echo "Login Listener | UP | Listening to 'loginServer'..." .PHP_EOL;
