@@ -21,9 +21,19 @@ class rabbitMQServer
 		$this->machine = getHostInfo(array($machine));
 		$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"];
 		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
-		$this->USER     = $this->machine[$server]["USER"];
-		$this->PASSWORD = $this->machine[$server]["PASSWORD"];
-		$this->VHOST = $this->machine[$server]["VHOST"];
+
+		//$this->USER     = $this->machine[$server]["USER"];
+		//$this->PASSWORD = $this->machine[$server]["PASSWORD"];
+		//$this->VHOST = $this->machine[$server]["VHOST"];
+		//
+		// retired old credential calls.  now referring to gitignored php file for creds.
+		// Andrew Galella - 10.1.2026					
+
+		$creds = require __DIR__ . '/rabbitCreds.php';
+		$this->USER = $creds['USER'];
+		$this->PASSWORD = $creds['PASSWORD'];
+		$this->VHOST = $creds['VHOST'];		
+
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
 			$this->exchange_type = $this->machine[$server]["EXCHANGE_TYPE"];
@@ -153,9 +163,19 @@ class rabbitMQClient
 		$this->machine = getHostInfo(array($machine));
 		$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"];
 		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
-		$this->USER     = $this->machine[$server]["USER"];
-		$this->PASSWORD = $this->machine[$server]["PASSWORD"];
-		$this->VHOST = $this->machine[$server]["VHOST"];
+
+		//$this->USER     = $this->machine[$server]["USER"];
+		//$this->PASSWORD = $this->machine[$server]["PASSWORD"];
+		//$this->VHOST = $this->machine[$server]["VHOST"];
+		//
+		// retired old credential calls.  now referring to gitignored php file for creds.
+		// Andrew Galella - 10.1.2026
+
+		$creds = require __DIR__ . '/rabbitCreds.php';
+		$this->USER = $creds['USER'];
+		$this->PASSWORD = $creds['PASSWORD'];
+		$this->VHOST = $creds['VHOST'];
+
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
 			$this->exchange_type = $this->machine[$server]["EXCHANGE_TYPE"];
