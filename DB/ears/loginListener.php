@@ -41,6 +41,12 @@ function doLogin($request): array {
         $stmt->close();
         $db->close();
         if ($fetched && isset($email)) {
+            $db2 = getDB();
+            $stmt = $db2->prepare("update users set last_login = CURRENT_TIMESTAMP where username = ?");
+            $stmt->bind_param('s', $user);
+            $stmt->execute();
+            $stmt->close();
+            $db2->close();
             return [
                 'status' => 'success',
                 'session_key' => bin2hex(random_bytes(32)),
