@@ -9,12 +9,6 @@ const MQ_ROUTES = [
 'login' => 'loginServer',
 'register' => 'registerServer'
 
-//defining api requests - Evans Mensah
-'recalls' = 'nhtsaServer',
-'complaints' ='nhtsaServer',
-'ratings' ='nhtsaServer',
-'make' ='nhtsaServer',
-'model'='nhtsaServer',];
 
 function mq_error($message) {
 return ['status' => 'error', 'message' => $message]; } //follows the naming convention from Kurt's stuff
