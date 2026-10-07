@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only runs when form is submitted
     </div>
     <input type="submit" value="Login" />
 </form>
+<p>Don't have an account? <a href="register.php">Register</a></p>
 
 <?php if ($msg): // prevent XSS by escaping <,> so HTML can't be ran in msg ?>
   <p><?= htmlspecialchars($msg) ?></p>

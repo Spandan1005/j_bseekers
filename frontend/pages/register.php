@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form submission
 <head>
   <meta charset="utf-8">
   <title>Register</title>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form submission
     </div>
     <input type="submit" value="Register" />
 </form>
+<p>Already have an account? <a href="login.php">Log in</a></p> 
 
 <?php if ($msg): // prevent XSS by escaping <,> so HTML can't be ran in msg ?> 
   <p><?= htmlspecialchars($msg) ?></p>
