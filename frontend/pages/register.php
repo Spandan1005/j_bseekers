@@ -27,6 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form submission
 		    'username' => $username,
 		    'password' => $password,
 	    ]);
+	    if ($reply['status'] === 'success') {
+		    header('Location: login.php');
+		    exit;
+	    }
 	    $msg = $reply['message'];
     }
 }
