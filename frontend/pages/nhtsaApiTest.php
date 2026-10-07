@@ -1,7 +1,7 @@
 //This test is for API - Evans
 
 <?php
-require __DIR__ . '/../lib/backend.php';
+require __DIR__ . '/../pages/home.php';
 
 //sample vehicle for testing (hardcoded)
 $make = 'acura';

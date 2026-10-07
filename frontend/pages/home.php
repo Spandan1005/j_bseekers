@@ -23,6 +23,8 @@ if (empty($_SESSION['session_key'])) { // checks for session key, if none then r
 <main>
   <?php // escapes username to prevent SQL injection or XSS ?>
   <h3>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></h3>
+  <p><a href="nhtsaApiTest.php">Recall Test</a></p>
+
   <p><a href="logout.php">Log out</a></p>
 
 </main>
