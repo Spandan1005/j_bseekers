@@ -7,7 +7,7 @@ $make = 'acura';
 $model = 'rdx';
 $year = 2012;
 
-$url = 'https://api.api.-ninja.com/v2/carmodels?' . http_build_query([
+$url = 'https://api.api.ninja.com/v2/carmodels?' . http_build_query([
 	'make' => $make,
 	'model' => $model,
 	'modelYear' => $year,
