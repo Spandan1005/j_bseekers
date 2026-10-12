@@ -7,7 +7,7 @@ $make = 'bmw';
 $model = '3';
 $badge = '320d';
 
-$url = 'https://api.api-ninjas.com/v2/cars? . http_build_query(
+$url = 'https://api.api-ninjas.com/v2/cars? . http_build_query([
 
 $options = [
 'http'=> [
