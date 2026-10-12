@@ -7,12 +7,14 @@ $make = 'bmw';
 $model = '3';
 $badge = 320d;
 
-$url = 'https://api.api-ninjas.com/v2/cars?make=bmw&model=3-series&badge=320d" \
-  -H "X-Api-Key: uqpfsxWpCMKJsXZO8yEPh4kOIxwhBrzOzGgHGXtN"' . http_build_query([
-	'make' => $make,
-	'model' => $model,
-	'badge' => $badge,
-]);
+$url = 'https://api.api-ninjas.com/v2/cars?
+
+options = [
+'http'=> [
+'method' => 'GET' 
+'header' "X-Api-Key: uqpfsxWpCMKJsXZO8yEPh4kOIxwhBrzOzGgHGXtN"' . http_build_query(
+])
+];
 
 // making the actual requst (outputs as plain text)
 $body =@file_get_contents($url);
