@@ -7,6 +7,7 @@ $make = 'bmw';
 $model = '3';
 $badge = '320d';
 
+<<<<<<< HEAD
 $url = 'https://api.api.ninja.com/v2/carmodels?' . http_build_query([
 	'make' => $make,
 	'model' => $model,
@@ -17,6 +18,9 @@ $url = 'https://api.api-ninjas.com/v2/cars?
 
 $url = 'https://api.api-ninjas.com/v2/cars? . http_build_query(
 >>>>>>> 90afab83bf0b2111a0550420306c42d52428cbc9
+=======
+$url = 'https://api.api-ninjas.com/v2/cars? . http_build_query([
+>>>>>>> 6e31827979dde56a27cc4e5b6bef835682af79cd
 
 $options = [
 'http'=> [
