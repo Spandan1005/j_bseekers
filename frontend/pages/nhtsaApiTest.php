@@ -5,8 +5,9 @@
 //sample vehicle for testing (hardcoded)
 $make = 'bmw';
 $model = '3';
-$badge = 320d;
+$badge = '320d';
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 $url = 'https://api.api.ninja.com/v2/carmodels?' . http_build_query([
 	'make' => $make,
@@ -15,12 +16,19 @@ $url = 'https://api.api.ninja.com/v2/carmodels?' . http_build_query([
 ]);
 =======
 $url = 'https://api.api-ninjas.com/v2/cars?
+=======
+$url = 'https://api.api-ninjas.com/v2/cars? . http_build_query(
+>>>>>>> 90afab83bf0b2111a0550420306c42d52428cbc9
 
-options = [
+$options = [
 'http'=> [
 'method' => 'GET' 
-'header' "X-Api-Key: uqpfsxWpCMKJsXZO8yEPh4kOIxwhBrzOzGgHGXtN"' . http_build_query(
-])
+'header' "X-Api-Key: uqpfsxWpCMKJsXZO8yEPh4kOIxwhBrzOzGgHGXtN"']
+["make" => $make,
+"model" => $model,
+"badge" => $badge
+
+]);
 ];
 >>>>>>> f7e35161619c4e03f8a047dfffc73136e98d59b5
 
@@ -42,7 +50,7 @@ exit;
 }
 print_r ($data);
 
-
+?>
 
 /*
 //Display readable results
