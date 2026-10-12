@@ -3,14 +3,15 @@
 <?php
 
 //sample vehicle for testing (hardcoded)
-$make = 'acura';
-$model = 'rdx';
-$year = 2012;
+$make = 'bmw';
+$model = '3';
+$badge = 320d;
 
-$url = 'https://api.api.-ninja.com/v2/carmodels?' . http_build_query([
+$url = 'https://api.api-ninjas.com/v2/cars?make=bmw&model=3-series&badge=320d" \
+  -H "X-Api-Key: uqpfsxWpCMKJsXZO8yEPh4kOIxwhBrzOzGgHGXtN"' . http_build_query([
 	'make' => $make,
 	'model' => $model,
-	'modelYear' => $year,
+	'badge' => $badge,
 ]);
 
 // making the actual requst (outputs as plain text)
@@ -29,13 +30,18 @@ if (!is_array($data)) {
 echo "Got a reply but it wasn't in JSON format.\n"; //the api is supposed to output a JSON format only
 exit;
 }
+print_r ($data);
 
+
+
+/*
 //Display readable results
 echo "count: " . ($data['Count'] ?? 'n/a') . "\n";
 echo "messages: " . ($data['Message'] ??''). "\n\n";
 
 $first = $data['results'][0] ?? null;
 if ($first) {
+
 echo "first recall:\n";
 echo "campaign: " . $first['NHTSACampaigneNumber'] . "\n";
 echo "component: " . $first['Component'] . "\n";
