@@ -3,13 +3,13 @@
 <?php
 //sample vehicle for testing (hardcoded)
 $make = 'bmw';
-$model = '3 series';
-$badge = '320d';
+$model = '3 Series';
+$limit = 10;
 
 $url = 'https://api.api-ninjas.com/v1/cars?' . http_build_query([
-        'make' => $make,
-        'model' => $model,
-	'badge'=> $badge,
+	'make' => $make,
+	'model' => $model,
+	'limit' => $limit,
 ]);
 
 $options = [
