@@ -1,14 +1,15 @@
 // Ninja API test
 
 <?php
-header ('Content-Type: text/plain');
 //sample vehicle for testing (hardcoded)
 $make = 'bmw';
 $model = '3 series';
+$badge = '320d';
 
 $url = 'https://api.api-ninjas.com/v1/cars?' . http_build_query([
         'make' => $make,
         'model' => $model,
+	'badge'=> $badge,
 ]);
 
 $options = [
