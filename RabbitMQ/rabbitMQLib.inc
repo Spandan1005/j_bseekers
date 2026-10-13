@@ -34,10 +34,6 @@ class rabbitMQServer
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];		
 
-		if (isset( $this->machine[$server]["ROUTING_KEY"]))
-		{
-			$this->routing_key = $this->machine[$server]["ROUTING_KEY"];
-		}
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
 			$this->exchange_type = $this->machine[$server]["EXCHANGE_TYPE"];
@@ -46,6 +42,10 @@ class rabbitMQServer
 		{
 			$this->auto_delete = $this->machine[$server]["AUTO_DELETE"];
 		}
+		if (isset( $this->machine[$server]["ROUTING_KEY"]))
+		{
+			$this->routing_key = $this->machine[$server]["ROUTING_KEY"];
+		}
 		$this->exchange = $this->machine[$server]["EXCHANGE"];
 		$this->queue = $this->machine[$server]["QUEUE"];
 	}
@@ -53,10 +53,12 @@ class rabbitMQServer
 	function process_message($msg)
 	{
 		// send the ack to clear the item from the queue
+		/*
 		if ($msg->getRoutingKey() !== "*")
     {
       return;
-    }
+	}
+		*/
     $this->conn_queue->ack($msg->getDeliveryTag());
 		try
 		{
@@ -180,10 +182,6 @@ class rabbitMQClient
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];
 
-		if (isset( $this->machine[$server]["ROUTING_KEY"]))
-		{
-			$this->routing_key = $this->machine[$server]["ROUTING_KEY"];
-		}
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
 			$this->exchange_type = $this->machine[$server]["EXCHANGE_TYPE"];
@@ -192,6 +190,10 @@ class rabbitMQClient
 		{
 			$this->auto_delete = $this->machine[$server]["AUTO_DELETE"];
 		}
+		if (isset( $this->machine[$server]["ROUTING_KEY"]))
+		{
+			$this->routing_key = $this->machine[$server]["ROUTING_KEY"];
+		} 	
 		$this->exchange = $this->machine[$server]["EXCHANGE"];
 		$this->queue = $this->machine[$server]["QUEUE"];
 	}
