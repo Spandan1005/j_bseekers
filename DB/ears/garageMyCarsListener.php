@@ -21,13 +21,22 @@ function listMyCars($request): array {
     }
     try {
         $db = getDB();
-        $stmt = $db->prepare("select id, year, make, model from users where username = ?");
+        $stmt = $db->prepare("select car_id, year, make, model from cars where username = ?");
         $stmt->bind_param('s', $user);
         $stmt->execute();
-        $stmt->bind_result($email);
-        $fetched = $stmt->fetch();
+        $result = $stmt->get_result();
+        $myCars = $stmt->fetch_all();
         $stmt->close();
-        $db->close();
+        if ($myCars && isset($result)) {
+            return [
+                'status' => 'success',
+                'cars' => $myCars;
+            ];
+        }
+        return [
+            'status' => 'error',
+            'message' => 'Unexpected error.'
+        ];
     }
     catch (Throwable $e) {
         // catchall failure

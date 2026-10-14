@@ -11,7 +11,35 @@ require_once __DIR__ . '/../lib/validate.php';
 
 
 function removeCar($request): array {
+    $user = trim($request['username']);
+    $session_key = $request['session_key'];
+    $car_id = $request['car_id'];
 
+    $validate = doValidate($user, $session_key);
+    if ($validate['status'] !== 'success')
+    {
+        return $validate;
+    }
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("delete from cars where username = ? and car_id = ? limit 1");
+        $stmt->bind_param('si', $user, $car_id);
+        $stmt->execute();
+        $stmt->close();
+        $db->close();
+        return [
+            'status' => 'success',
+            'message' => 'Car removed.'
+        ];
+    }
+    catch (Throwable $e) {
+        // catchall failure
+        error_log('removeCar: ' . $e->getMessage());
+        return [
+            'status' => 'error',
+            'message' => 'Unexpected error occurred.'
+        ];
+    }
 }
 
 // open and close listener

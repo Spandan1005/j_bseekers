@@ -1,5 +1,5 @@
 create table cars (
-    id bigint unsigned not null auto_increment primary key,
+    car_id bigint unsigned not null auto_increment primary key,
     username varchar(60) not null,
     year smallint unsigned not null,
     make varchar(50) not null,
