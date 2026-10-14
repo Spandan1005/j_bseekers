@@ -45,19 +45,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 	}
 	}
        
-	if ($action === 'remove') { // remove button (should only work if a car is selected/works right now even if no car)
+	if ($action === 'remove') { // remove button (now works only if car is selected)
 		$car_id = 0;
 		if (isset($_POST['car_id'])) {
 			$car_id = (int)$_POST['car_id'];
 		}
 
-                $reply = send_request([ // tells DB which car to delete
-			'type' => 'remove_car',
-			'session_key' => $_SESSION['session_key'],
-			'username' => $_SESSION['username'],
-			'car_id' => $car_id
-		]);
-		$msg = $reply['message'];
+                if ($car_id == 0) { // check for no car picked before remove
+			$msg = 'Select a car first';
+		} else {
+			$reply = send_request([
+				'type' => 'remove_car',
+				'session_key' => $_SESSION['session_key'],
+				'car_id' => $car_id,
+			]);
+			$msg = $reply['message'];
+		}
 	}
 }
 
