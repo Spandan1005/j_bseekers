@@ -1,4 +1,5 @@
 create table recalls (
+    recall_id bigint unsigned not null auto_increment primary key,
     campaign varchar(12) not null,
     component varchar(50) not null,
     _summary varchar(255) not null,
