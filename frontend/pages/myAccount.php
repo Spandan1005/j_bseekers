@@ -32,7 +32,7 @@ if (isset($reply['recall_emails'])) {
 
 // checks box if recall emails are already on
 $checked = '';
-if ($recall_emails === '1') {
+if ($recall_emails == 1) { 
 	$checked = 'checked';
 }
 ?>
@@ -60,7 +60,7 @@ if ($recall_emails === '1') {
 <?php // toggle for recall alert emails ?>
 <form method="POST" action="myAccount.php">
     <div>
-    <input type="checkbox" id="recall_emails" name="recall_emails" value="1" />
+    <input type="checkbox" id="recall_emails" name="recall_emails" value="1" <?= $checked ?> />
     <label for="recall_emails">Email me when a car in my garage gets a new recall</label>
     </div>
     <button type="submit" name="action" value="save">Save</button>
