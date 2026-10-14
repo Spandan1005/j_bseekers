@@ -2,12 +2,17 @@
 
 //All te file paths to directory and the ini file - Spandan Patel 9/29/26
 const MQ_DIR = __DIR__ . '/../../RabbitMQ';
-const MQ_INI = 'testRabbitMQ.ini';
+//const MQ_INI = 'testRabbitMQ.ini'; //no longer needed as each route is in MQ_ROUTES and it names its own ini file
 
 //defining requests - Spandan Ptel 9/29/26
 const MQ_ROUTES = [
-'login' => 'loginServer',
-'register' => 'registerServer'];
+'login' => ['testRabbitMQ.ini', 'loginServer'],
+'register' => ['testRabbitMQ.ini', 'registerServer'],
+'mycars' => ['garage.ini', 'garageMyCars'],
+'addcar' => ['garage.ini', 'garageAddCar'],
+'car' => ['garage.ini', 'garageCar'],
+'editcar' => ['garage.ini', 'garageEditCar'],
+'removecar' => ['garage.ini', 'garageRemoveCar']];
 
 function mq_error($message) {
 return ['status' => 'error', 'message' => $message]; } //follows the naming convention from Kurt's stuff
@@ -17,7 +22,7 @@ function send_request(array $payload){
 	if (!isset(MQ_ROUTES[$type])) {
 		return mq_error('Unknown request type.');
 	}
-	$section = MQ_ROUTES[$type];
+	[$iniFile, $section] = MQ_ROUTES[$type];
 
 	if (!extension_loaded('amqp')) {
 	return mq_error('Server setup problem: php amqp not installed, please install');
@@ -26,11 +31,11 @@ function send_request(array $payload){
 	$oldDir = getcwd();
 	chdir(MQ_DIR);
 	try {
-		$ini = parse_ini_file(MQ_INI, true); //referencing the ini file 
+		$ini = parse_ini_file($iniFile, true); //referencing the ini file 
 		$host = $ini[$section]['BROKER_HOST'] ?? null;
 		$port = (int)($ini[$section]['BROKER_PORT'] ?? 5672); //broker IP's default port just an FYI
 		if ($host === null) {
-		return mq_error("Section [$section] is missing from " . MQ_INI); //talks abt a host or a section that could be missing from ini 
+		return mq_error("Section [$section] is missing from " . $iniFile); //talks abt a host or a section that could be missing from ini 
 		}
 		$sock = @fsockopen($host, $port, $errno, $errstr, 3); //refering to trying tcp connection
 		if (!$sock) {
@@ -39,7 +44,7 @@ function send_request(array $payload){
 		fclose($sock); //clsoing the tcp connection
 
 		require_once MQ_DIR . '/rabbitMQLib.inc';
-		$client = new rabbitMQClient(MQ_INI, $section); //the client for this section
+		$client = new rabbitMQClient($iniFile, $section); //the client for this section
 		$reply = $client->send_request($payload); 	//request gets sent
 
 		if (!is_array($reply)) {
