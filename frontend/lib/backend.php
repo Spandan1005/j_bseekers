@@ -8,6 +8,7 @@ const MQ_DIR = __DIR__ . '/../../RabbitMQ';
 const MQ_ROUTES = [
 'login' => ['testRabbitMQ.ini', 'loginServer'],
 'register' => ['testRabbitMQ.ini', 'registerServer'],
+'logout' => ['testRabbitMQ.ini', 'logoutServer'],
 'get_garage' => ['garage.ini', 'garageMyCars'],
 'add_car' => ['garage.ini', 'garageAddCar'],
 'get_car' => ['garage.ini', 'garageCar'],
