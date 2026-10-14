@@ -11,7 +11,6 @@ require __DIR__ . '/../lib/backend.php';
 // My Garage: list of user's cars, add/edit/remove buttons, popup with car details, dropdown list for car additions
 
 // To do: list, buttons, popup
-// Completed buttons (10.13)
 
 // session checker
 if (empty($_SESSION['session_key'])) {
@@ -44,7 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 		]);
 		$msg = $reply['message'];
 	}
-    }
+	}
+       
+	if ($action === 'remove') { // remove button (should only work if a car is selected/works right now even if no car)
+		$car_id = 0;
+		if (isset($_POST['car_id'])) {
+			$car_id = (int)$_POST['car_id'];
+		}
+
+
+
 }
 
 // decides which popup is displayed based on which button is clicked
@@ -154,7 +162,7 @@ $cars = [];
 $garage = send_request([
 	'type' => 'get_garage',
 	'session_key' => $_SESSION['session_key'],
-	'username' => $_SESSION['session_key'],
+	'username' => $_SESSION['username'],
 ]);
 if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored to send back
 	$cars = $garage['cars'];
