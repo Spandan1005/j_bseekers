@@ -63,6 +63,19 @@ if (isset($_GET['make'])) {
 	$pick_make = trim($_GET['make']);
 }
 
+// details popup
+// API info still not stored in DB, creating sample skeleton for future plug + play (hopefully)
+// ^ 10.13 / 11:34
+$popup_car = null;
+$recalls = [];
+$complaints = [];
+
+if ($action === 'view' || $action === 'edit') {
+	$car_id = 0;
+	if (isset($_GET['car_id'])) {
+		$car_id = (int)$_GET['car_id'];
+	}
+
 // dropdown lists for the add popup
 // in NHTSA's order: year, make model
 // each dropdown only loads once previous one has been selected 
@@ -187,7 +200,7 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
 	  <?php if ($m === $pick_make): // keeps selected make even after reload ?>
         <option value="<?= htmlspecialchars($m) ?>" selected><?= htmlspecialchars($m) ?></option>
           <?php else: ?>
-        <option value="<?= htmlspecialchars($m) ?>"<?= htmlspecialchars($m) ?></option>
+        <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
           <?php endif; ?>
         <?php endforeach; ?>
       </select>
@@ -204,7 +217,7 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
     <?php // add car switches same form to POST so car gets saved instead of reloading list ?>
     <button type="submit" formmethod="POST" name="action" value="add" <?= $model_disabled ?>>Add Car</button>
     <a href="myGarage.php">Cancel</a>
-    </form
+    </form>
 </dialog>
 <?php endif; ?>
 
