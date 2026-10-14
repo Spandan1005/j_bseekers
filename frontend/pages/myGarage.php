@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 		$reply = send_request([ // sends car data to DB
 			'type' => 'add_car',
 			'session_key' => $_SESSION['session_key'], // tells DB whose garage it is
+			'username' => $_SESSION['username'], // for Andrew's listeners + extra validation
 			'year' => $year,
 			'make' => $make,
 			'model' => $model,
@@ -66,15 +67,36 @@ if (isset($_GET['make'])) {
 // details popup
 // API info still not stored in DB, creating sample skeleton for future plug + play (hopefully)
 // ^ 10.13 / 11:34
-//$popup_car = null;
-//$recalls = [];
-//$complaints = [];
+$popup_car = null;
+$recalls = [];
+$complaints = [];
 
-//if ($action === 'view' || $action === 'edit') {
-//	$car_id = 0;
-//	if (isset($_GET['car_id'])) {
-//		$car_id = (int)$_GET['car_id'];
-//	}
+if ($action === 'view' || $action === 'edit') {
+	$car_id = 0;
+	if (isset($_GET['car_id'])) {
+		$car_id = (int)$_GET['car_id'];
+	}
+        if ($car_id == 0) { // edit button but didn't select a car
+		$msg = 'Select a car first';
+		$action = '';
+	} else {
+		$reply = send_request([ // DB sends back car with recalls + complaints
+			'type' => 'get_car',
+			'session_key' => $_SESSION['session_key'],
+			'username' => $_SESSION['username'],
+			'car_id' => $car_id,
+		]);
+		if (isset($reply['car'])) {
+			$popup_car = $reply['car'];
+		}
+		if (isset($reply['RECALLS'])) {
+			$recalls = $reply['RECALLS'];
+		}
+		if (isset($reply['complaints'])) {
+			$complaints = $reply['complaints'];
+		}
+        }
+}
 
 // dropdown lists for the add popup
 // in NHTSA's order: year, make model
@@ -87,6 +109,7 @@ if ($action === 'add') {
 	$reply = send_request([ // all model years NHTSA has complaint data for
 		'type' => 'get_years',
 		'session_key' => $_SESSION['session_key'],
+		'username' => $_SESSION['username'],
 	]);
 	if (isset($reply['years'])) {
 		$years = $reply['years'];
@@ -95,6 +118,7 @@ if ($action === 'add') {
 		$reply = send_request([ 
 			'type' => 'get_makes',
 			'session_key' => $_SESSION['session_key'],
+			'username' => $_SESSION['username'],
 			'year' => $pick_year,
 		]);
 		if (isset($reply['makes'])) {
@@ -105,6 +129,7 @@ if ($action === 'add') {
 		$reply = send_request([ 
 			'type' => 'get_models',
 			'session_key' => $_SESSION['session_key'],
+			'username' => $_SESSION['username'],
 			'year' => $pick_year,
 			'make' => $pick_make,
 		]);
@@ -129,6 +154,7 @@ $cars = [];
 $garage = send_request([
 	'type' => 'get_garage',
 	'session_key' => $_SESSION['session_key'],
+	'username' => $_SESSION['session_key'],
 ]);
 if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored to send back
 	$cars = $garage['cars'];
@@ -219,6 +245,35 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
     <a href="myGarage.php">Cancel</a>
     </form>
 </dialog>
+<?php endif; ?>
+
+<?php if ($action === 'view' && $popup_car): // API not yet integrated, so testing locally with a fake backend / 10.14 ?>
+	<dialog id="popup">
+	    <h3><?= htmlspecialchars($popup_car['year'] . ' ' . $popup_car['make'] . ' ' . $popup_car['model']) ?></h3>
+	    <p>Year: <?= htmlspecialchars($popup_car['year']) ?></p>
+            <p>Make: <?= htmlspecialchars($popup_car['make']) ?></p>
+	    <p>Model: <?= htmlspecialchars($popup_car['model']) ?></p>
+
+            <h3>Recall History</h3>
+            <?php if (!$recalls): ?>
+            <p>No recalls found</p>
+            <?php endif; ?>
+	    <?php foreach ($recalls as $r): ?>
+            <p><strong><?= htmlspecialchars($r['component']) ?></strong> - <?= date('m/d/Y', (int)$r['date']) ?></p>
+            <p><?= htmlspecialchars($r['summary']) ?></p>
+            <?php endforeach; ?>
+
+            <h3>Complaints</h3>
+            <?php if (!$complaints): ?>
+            <p>No complaints found</p>
+            <?php endif; ?>
+            <?php foreach ($complaints as $c): ?>
+            <p><strong><?= htmlspecialchars($c['component']) ?></strong> - <?= date('m/d/Y', (int)$c['date']) ?></p>
+	    <p><?= htmlspecialchars($c['summary']) ?></p>
+            <?php endforeach; ?>
+
+            <p><a href="myGarage.php">Close</a></p>
+       </dialog>
 <?php endif; ?>
 
 <script>
