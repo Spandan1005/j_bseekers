@@ -6,8 +6,13 @@ const MQ_INI = 'testRabbitMQ.ini';
 
 //defining requests - Spandan Ptel 9/29/26
 const MQ_ROUTES = [
-'login' => 'loginServer',
-'register' => 'registerServer'];
+'login' => ['testRabbitMQ.ini', 'loginServer'],
+'register' => ['testRabbitMQ.ini', 'registerServer'],
+'mycars' => ['garage.ini', 'garageMyCars'],
+'addcar' => ['garage.ini', 'garageAddCar'],
+'car' => ['garage.ini', 'garageCar'],
+'editcar' => ['garage.ini', 'garageEditCar'],
+'removecar' => ['garage.ini', 'garageRemoveCar']];
 
 function mq_error($message) {
 return ['status' => 'error', 'message' => $message]; } //follows the naming convention from Kurt's stuff
