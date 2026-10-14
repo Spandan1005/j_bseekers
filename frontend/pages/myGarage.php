@@ -8,7 +8,7 @@ require __DIR__ . '/../lib/backend.php';
 // Using request format agreed with Spandan + Andrew
 // Testing done locally until DB is completely set up
 
-// My Garage: list of user's cars, add/edit/remove buttons, popup with car details, dropdown list for car additions
+// My Garage: list of user's cars, add/remove buttons, popup with car details, dropdown list for car additions
 
 // To do: list, buttons, popup
 
@@ -88,12 +88,12 @@ $popup_car = null;
 $recalls = [];
 $complaints = [];
 
-if ($action === 'view' || $action === 'edit') {
+if ($action === 'view') {
 	$car_id = 0;
 	if (isset($_GET['car_id'])) {
 		$car_id = (int)$_GET['car_id'];
 	}
-        if ($car_id == 0) { // edit button but didn't select a car
+        if ($car_id == 0) { // no car id in link so doesn't show anything 
 		$msg = 'Select a car first';
 		$action = '';
 	} else {
@@ -197,7 +197,6 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
 <form method="GET" action="myGarage.php">
     <p>
     <button type="submit" name="action" value="add">Add</button>
-    <button type="submit" name="action" value="edit">Edit</button>
     <button type="submit" name="action" value="remove" formmethod="POST" onclick="return confirm('Are you sure you want to remove this car?')">Remove</button>
     </p>
 
@@ -207,7 +206,7 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
     <p>Click Add to add a car</p>
     <?php endif; ?>
 
-    <?php foreach ($cars as $car): // name opens detail popup/radio button allow for edit/remove ?>
+    <?php foreach ($cars as $car): // name opens detail popup/radio button to select car to remove ?>
     <div>
       <input type="radio" name="car_id" value="<?= (int)$car['car_id'] ?>" />
       <a href="myGarage.php?action=view&car_id=<?= (int)$car['car_id'] ?>"><?= htmlspecialchars($car['year'] . ' ' . $car['make'] . ' ' . $car['model']) ?></a>
