@@ -12,6 +12,29 @@ if (empty($_SESSION['session_key'])) {
 }
 
 $msg = '';
+
+// load user info every time page opens
+// DB not yet routed so testing locally | 10.14
+$username ='';
+$email='';
+$recall_emails = 0;
+$reply = send_request([
+	'type' => 'get_account',
+	'session_key' => $_SESSION['session_key'],
+	'username' => $_SESSION['username'],
+]);
+if (isset($reply['username'])) {
+	$username = $reply['username'];
+}
+if (isset($reply['recall_emails'])) {
+	$recall_emails = $reply['recall_emails'];
+}
+
+// checks box if recall emails are already on
+$checked = '';
+if ($recall_emails === '1') {
+	$checked = 'checked';
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,8 +53,9 @@ $msg = '';
   <p><?= htmlspecialchars($msg) ?></p>
 <?php endif; ?>
 
-<p>Username: </p>
-<p>Email: </p>
+<?php // XSS prevention cause user types when registering ?>
+	<p>Username: <?= htmlspecialchars($username) ?></p>
+	<p>Email: <?= htmlspecialchars($email) ?></p>
 
 <?php // toggle for recall alert emails ?>
 <form method="POST" action="myAccount.php">
