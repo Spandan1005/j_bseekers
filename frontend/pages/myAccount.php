@@ -13,6 +13,19 @@ if (empty($_SESSION['session_key'])) {
 
 $msg = '';
 
+// save button 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only runs after form submission
+	$recall_email = (int)$_POST['recalls_emails']; // 1 = on, 0 = off
+
+	$reply = send_request([ // tells DB to turn recall notification on/off
+		'type' => 'set_recall_emails',
+		'session_key' => $_SESSION['session_key'],
+		'username' => $_SESSION['username'],
+		'recall_emails' => $recall_emails,
+	]);
+	$msg = $reply['message'];
+}
+
 // load user info every time page opens
 // DB not yet routed so testing locally | 10.14
 $username ='';
