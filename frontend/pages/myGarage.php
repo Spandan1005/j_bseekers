@@ -182,6 +182,13 @@ if ($models) {
     </form
 </dialog>
 <?php endif; ?>
+
+<script>
+let popup = document.getElementById('popup'); // only display when popup was asked for
+if (popup) {
+	popup.showModal(); // hidden until opened
+}
+</script>
 </main>
 </body>
 </html>
