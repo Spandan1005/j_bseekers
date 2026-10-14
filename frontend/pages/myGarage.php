@@ -1,18 +1,110 @@
 <?php
+session_start();
 require __DIR__ . '/../lib/backend.php';
 
 // Kurt Castro | 10.13
 // Copied from register.php
-// My Garage: list of user's cars, add/edit/remove buttons, popup with car details
+// My Garage: list of user's cars, add/edit/remove buttons, popup with car details, dropdown list for car additions
 // To do: list, buttons, popup
+// Completed buttons (10.13)
 
 // session checker
 if (empty($_SESSION['session_key'])) {
-	header('Locaation: login.php'); // redirects to login if no session key
+	header('Location: login.php'); // redirects to login if no session key
 	exit;
 }
 
 $msg = '';
+
+// add car form
+// NHTSA's order: year, make, model
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitted
+	$action = $_POST['action']; // which button was clicked
+	
+	if ($action === 'add') { // add car popup form
+		$year = (int)$_POST['year'];
+		$make = trim($_POST['make']);
+		$model = trim($_POST['model']);
+
+        if ($year == 0 || $make == '' || $model == '') { // server-side checks for empty dropdowns
+		$msg = 'Pick a year, make, and model.';
+        } else {
+		$reply = send_request([ // sends car data to DB
+			'type' => 'add_car',
+			'session_key' => $_SESSION['session_key'], // tells DB whose garage it is
+			'year' => $year,
+			'make' => $make,
+			'model' => $model,
+		]);
+		$msg = $reply['message'];
+	}
+    }
+}
+
+// decides which popup is displayed based on which button is clicked
+$action = '';
+if (isset($_GET['action'])) {
+	$action = $_GET['action'];
+}
+
+// what the user selected in the add dropdown
+$pick_year = 0;
+if (isset($_GET['year'])) {
+	$pick_year = (int)$_GET['year'];
+}
+
+$pick_make = '';
+if (isset($_GET['make'])) {
+	$pick_make = trim($_GET['make']);
+}
+
+// dropdown lists for the add popup
+// in NHTSA's order: year, make model
+// each dropdown only loads once previous one has been selected 
+$years = [];
+$makes = [];
+$models = [];
+
+if ($action === 'add') {
+	$reply = send_request([ // all model years NHTSA has complaint data for
+		'type' => 'get_years',
+		'session_key' => $_SESSION['session_key'],
+	]);
+	if (isset($reply['years'])) {
+		$years = $reply['years'];
+        }
+	if ($pick_year != 0) { // only lists makes that were available from selected year
+		$reply = send_request([ 
+			'type' => 'get_makes',
+			'session_key' => $_SESSION['session_key'],
+			'year' => $pick_year,
+		]);
+		if (isset($reply['makes'])) {
+			$makes = $reply['makes'];
+		}
+	}
+	if ($pick_year != 0 && $pick_make != '') { // models that exist for that year + make
+		$reply = send_request([ 
+			'type' => 'get_models',
+			'session_key' => $_SESSION['session_key'],
+			'year' => $pick_year,
+			'make' => $pick_make,
+		]);
+		if (isset($reply['models'])) {
+			$models = $reply['models'];
+		}
+	}
+}
+
+// grays out make/model dropdown + add car button until there's something to pick
+$make_disabled = 'disabled';
+if ($makes) {
+	$make_disabled = '';
+}
+$model_disabled = 'disabled';
+if ($models) {
+	$model_disabled = '';
+}
 ?>
 
 <!DOCTYPE html>
@@ -41,5 +133,55 @@ $msg = '';
     <p>You do not have any cars in your Garage</p>
     <p>Click Add to add a car</p>
 </form>
+
+<?php if ($action === 'add'): ?>
+<dialog id="popup">
+    <h3>Add a Car</h3>
+    <?php // picking year or make should reload the page so next dropdown shows results according to previous selection
+    ?>
+    <form method="GET" action="myGarage.php">
+    <input type="hidden" name="action" value="add" />
+    <div>
+      <label for="year">Year</label>
+      <select id="year" name="year" onchange="this.form.submit()">
+	<option value="">-- Pick a year --</option>
+	<?php foreach ($years as $y): ?>
+	  <?php if ($y == $pick_year): // keeps the picked year selected after reload ?>
+	    <option value="<?= htmlspecialchars($y) ?>" selected><?= htmlspecialchars($y) ?></option>
+          <?php else: ?>
+	    <option value="<?= htmlspecialchars($y) ?>"><?= htmlspecialchars($y) ?></option>
+          <?php endif; ?>
+	<?php endforeach; ?>
+      </select>
+    </div>
+    <div>
+      <label for="make">Make</label>
+      <select id="make" name="make" onchange="this.form.submit()" <?= $make_disabled ?>>
+        <option value="">-- Pick a Make --</option>
+        <?php foreach ($makes as $m): ?>
+	  <?php if ($m === $pick_make): // keeps selected make even after reload ?>
+        <option value="<?= htmlspecialchars($m) ?>" selected><?= htmlspecialchars($m) ?></option>
+          <?php else: ?>
+        <option value="<?= htmlspecialchars($m) ?>"<?= htmlspecialchars($m) ?></option>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div>
+      <label for="model">Model</label>
+      <select id="model" name="model" <?= $model_disabled ?>>
+        <option value="">-- Pick a Model --</option>
+        <?php foreach ($models as $m): ?>
+          <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <?php // add car switches same form to POST so car gets saved instead of reloading list ?>
+    <button type="submit" formmethod="POST" name="action" value="add" <?= $model_disabled ?>>Add Car</button>
+    <a href="myGarage.php">Cancel</a>
+    </form
+</dialog>
+<?php endif; ?>
 </main>
+</body>
 </html>
