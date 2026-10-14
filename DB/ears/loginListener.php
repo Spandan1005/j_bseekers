@@ -42,14 +42,22 @@ function doLogin($request): array {
         $db->close();
         if ($fetched && isset($email)) {
             $db2 = getDB();
-            $stmt = $db2->prepare("update users set last_login = CURRENT_TIMESTAMP where username = ?");
+            $stmt = $db2->prepare("update users set last_login = UNIX_TIMESTAMP() where username = ?");
             $stmt->bind_param('s', $user);
+            $stmt->execute();
+            $stmt->close();
+            // create record of session key in the sessions table with a ttl.  this will be used
+            // in validation.php library.  Andrew Galella 10/14/2026
+            $session_key = bin2hex(random_bytes(32));
+
+            $stmt = $db2->prepare("insert into sessions (session_key, username, creation, expiration) values (?,?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()+7200)");
+            $stmt->bind_param('ss', hash('sha256',$session_key), $user);
             $stmt->execute();
             $stmt->close();
             $db2->close();
             return [
                 'status' => 'success',
-                'session_key' => bin2hex(random_bytes(32)),
+                'session_key' => $session_key,
                 'message' => 'login success.'
             ];
         }
