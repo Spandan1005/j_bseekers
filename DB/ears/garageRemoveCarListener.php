@@ -25,11 +25,18 @@ function removeCar($request): array {
         $stmt = $db->prepare("delete from cars where username = ? and car_id = ? limit 1");
         $stmt->bind_param('si', $user, $car_id);
         $stmt->execute();
+        $affected = $stmt->affected_rows;
         $stmt->close();
         $db->close();
+        if ($affected) {
+            return [
+                'status' => 'success',
+                'message' => 'Car removed.'
+            ];
+        }
         return [
-            'status' => 'success',
-            'message' => 'Car removed.'
+            'status' => 'error',
+            'message' => 'Car not found.'
         ];
     }
     catch (Throwable $e) {

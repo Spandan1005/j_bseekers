@@ -25,17 +25,11 @@ function listMyCars($request): array {
         $stmt->bind_param('s', $user);
         $stmt->execute();
         $result = $stmt->get_result();
-        $myCars = $stmt->fetch_all();
+        $myCars = $result->fetch_all(MYSQL_ASSOC);
         $stmt->close();
-        if ($myCars && isset($result)) {
-            return [
-                'status' => 'success',
-                'cars' => $myCars;
-            ];
-        }
         return [
-            'status' => 'error',
-            'message' => 'Unexpected error.'
+            'status' => 'success',
+            'cars' => $myCars
         ];
     }
     catch (Throwable $e) {
