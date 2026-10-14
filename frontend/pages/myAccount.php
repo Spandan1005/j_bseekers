@@ -15,7 +15,10 @@ $msg = '';
 
 // save button 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only runs after form submission
-	$recall_email = (int)$_POST['recalls_emails']; // 1 = on, 0 = off
+	$recall_emails = 0; // default off
+	if (isset($_POST['recall_emails'])) {
+		$recall_emails = 1; // 1 = on 
+	}
 
 	$reply = send_request([ // tells DB to turn recall notification on/off
 		'type' => 'set_recall_emails',
