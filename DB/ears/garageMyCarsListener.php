@@ -11,7 +11,32 @@ require_once __DIR__ . '/../lib/validate.php';
 
 
 function listMyCars($request): array {
+    $user = trim($request['username']);
+    $session_key = $request['session_key'];
 
+    $validate = doValidate($user, $session_key);
+    if ($validate['status'] !== 'success')
+    {
+        return $validate;
+    }
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("select id, year, make, model from users where username = ?");
+        $stmt->bind_param('s', $user);
+        $stmt->execute();
+        $stmt->bind_result($email);
+        $fetched = $stmt->fetch();
+        $stmt->close();
+        $db->close();
+    }
+    catch (Throwable $e) {
+        // catchall failure
+        error_log('listMyCars: ' . $e->getMessage());
+        return [
+            'status' => 'error',
+            'message' => 'Unexpected error.'
+        ];
+    }
 }
 
 // open and close listener

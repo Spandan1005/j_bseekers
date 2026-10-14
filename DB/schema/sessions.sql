@@ -1,7 +1,7 @@
 create table sessions
 (session_key char(64) not null primary key,
 username varchar(60) not null,
-creation bigint unsigned not null,
+creation bigint unsigned not null default (UNIX_TIMESTAMP()),
 expiration bigint unsigned not null,
 constraint fk_user_session foreign key (username)
 references users(username)

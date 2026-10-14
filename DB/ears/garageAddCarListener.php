@@ -11,7 +11,44 @@ require_once __DIR__ . '/../lib/validate.php';
 
 
 function addCar($request): array {
+    $user = trim($request['username']);
+    $session_key = $request['session_key'];
+    $year = $request['year'];
+    $make = $request['make'];
+    $model = $request['model'];
 
+    $validate = doValidate($user, $session_key);
+    if ($validate['status'] !== 'success')
+    {
+        return $validate;
+    }
+
+    if (empty($year) || empty($make) || empty($model)) {
+        return [
+            'status' => 'error',
+            'message' => 'All field are required.'
+        ];
+    }
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("insert into cars (username, year, make, model) values (?,?,?,?)");
+        $stmt->bind_param('siss', $user, $year, $make, $model);
+        $stmt->execute();
+        $stmt->close();
+        $db->close();
+        return [
+            'status' => 'success',
+            'message' => 'Car added.'
+        ];
+    }
+    catch (Throwable $e) {
+        // catchall failure
+        error_log('addCar: ' . $e->getMessage());
+        return [
+            'status' => 'error',
+            'message' => 'Unexpected error.'
+        ];
+    }
 }
 
 // open and close listener

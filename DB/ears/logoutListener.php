@@ -13,7 +13,7 @@ function doLogout($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
 
-    if ($user === '' || $pass === '') {
+    if ($user === '' || $session_key === '') {
         return [
             'status' => 'error',
             'message' => 'missing fields.'
