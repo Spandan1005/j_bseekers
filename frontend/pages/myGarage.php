@@ -105,6 +105,16 @@ $model_disabled = 'disabled';
 if ($models) {
 	$model_disabled = '';
 }
+
+// need to load user's car every time page opens
+$cars = [];
+$garage = send_request([
+	'type' => 'get_garage',
+	'session_key' => $_SESSION['session_key'],
+]);
+if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored to send back
+	$cars = $garage['cars'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -130,8 +140,18 @@ if ($models) {
     <button type="submit" name="action" value="remove" formmethod="POST" onclick="return confirm('Are you sure you want to remove this car?')">Remove</button
     </p>
 
-    <p>You do not have any cars in your Garage</p>
+    <?php // checks to see if list is empty instead of outputting "No cars yet" by default ?>
+    <?php if (!cars): ?>
+    <p>You currently have 0 cars in your garage</p>
     <p>Click Add to add a car</p>
+    <?php endif; ?>
+
+    <?php foreach ($cars as $car): // name opens detail popup/radio button allow for edit/remove ?>
+    <div>
+      <input type="radio" name="car_id" value="<?= (int)$car['car_id'] ?>" />
+      <a href="myGarage.php?action=view&car_id=<?= (int)$car['car_id'] ?>"><?= $car['year'] . ' ' . $car['make'] . ' ' . $car['model'] ?></a>
+    </div>
+    <?php endforeach; ?>
 </form>
 
 <?php if ($action === 'add'): ?>
