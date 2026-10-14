@@ -276,7 +276,8 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
             <p>No recalls found</p>
             <?php endif; ?>
 	    <?php foreach ($recalls as $r): ?>
-            <p><strong><?= htmlspecialchars($r['component']) ?></strong> - <?= date('m/d/Y', (int)$r['date']) ?></p>
+	    <p><strong><?= htmlspecialchars($r['component']) ?></strong> - <?= date('m/d/Y', (int)$r['date']) ?></p>
+            <p>Campaign: <?= htmlspecialchars($r['campaign']) ?></p>
             <p><?= htmlspecialchars($r['summary']) ?></p>
             <?php endforeach; ?>
 
