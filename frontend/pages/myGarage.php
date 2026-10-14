@@ -66,15 +66,15 @@ if (isset($_GET['make'])) {
 // details popup
 // API info still not stored in DB, creating sample skeleton for future plug + play (hopefully)
 // ^ 10.13 / 11:34
-$popup_car = null;
-$recalls = [];
-$complaints = [];
+//$popup_car = null;
+//$recalls = [];
+//$complaints = [];
 
-if ($action === 'view' || $action === 'edit') {
-	$car_id = 0;
-	if (isset($_GET['car_id'])) {
-		$car_id = (int)$_GET['car_id'];
-	}
+//if ($action === 'view' || $action === 'edit') {
+//	$car_id = 0;
+//	if (isset($_GET['car_id'])) {
+//		$car_id = (int)$_GET['car_id'];
+//	}
 
 // dropdown lists for the add popup
 // in NHTSA's order: year, make model
