@@ -22,7 +22,7 @@ function send_request(array $payload){
 	if (!isset(MQ_ROUTES[$type])) {
 		return mq_error('Unknown request type.');
 	}
-	$section = MQ_ROUTES[$type];
+	[$iniFile, $section] = MQ_ROUTES[$type];
 
 	if (!extension_loaded('amqp')) {
 	return mq_error('Server setup problem: php amqp not installed, please install');
