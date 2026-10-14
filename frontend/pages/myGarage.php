@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 			$reply = send_request([
 				'type' => 'remove_car',
 				'session_key' => $_SESSION['session_key'],
+				'username' => $_SESSION['username'],
 				'car_id' => $car_id,
 			]);
 			$msg = $reply['message'];
