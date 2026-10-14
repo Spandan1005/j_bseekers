@@ -149,7 +149,7 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
     <?php foreach ($cars as $car): // name opens detail popup/radio button allow for edit/remove ?>
     <div>
       <input type="radio" name="car_id" value="<?= (int)$car['car_id'] ?>" />
-      <a href="myGarage.php?action=view&car_id=<?= (int)$car['car_id'] ?>"><?= $car['year'] . ' ' . $car['make'] . ' ' . $car['model'] ?></a>
+      <a href="myGarage.php?action=view&car_id=<?= (int)$car['car_id'] ?>"><?= htmlspecialchars($car['year'] . ' ' . $car['make'] . ' ' . $car['model']) ?></a>
     </div>
     <?php endforeach; ?>
 </form>
