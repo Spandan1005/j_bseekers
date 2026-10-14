@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . '/../lib/database.php';
 // library for session token validation
 // Andrew Galella, 10/14/2026
 
@@ -28,7 +28,7 @@ function doValidate($user, $session_key): array {
             ];
         }
         return [
-            'status' => 'error',
+            'status' => 'invalid',
             'message' => 'Invalid session key.'
         ];
     }
