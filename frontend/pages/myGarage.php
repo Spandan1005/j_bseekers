@@ -89,8 +89,8 @@ if ($action === 'view' || $action === 'edit') {
 		if (isset($reply['car'])) {
 			$popup_car = $reply['car'];
 		}
-		if (isset($reply['RECALLS'])) {
-			$recalls = $reply['RECALLS'];
+		if (isset($reply['recalls'])) {
+			$recalls = $reply['recalls'];
 		}
 		if (isset($reply['complaints'])) {
 			$complaints = $reply['complaints'];
