@@ -42,6 +42,9 @@ $reply = send_request([
 if (isset($reply['username'])) {
 	$username = $reply['username'];
 }
+if (isset($reply['email'])) {
+	$email = $reply['email'];
+}
 if (isset($reply['recall_emails'])) {
 	$recall_emails = $reply['recall_emails'];
 }
