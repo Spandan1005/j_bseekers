@@ -3,8 +3,13 @@ session_start();
 require __DIR__ . '/../lib/backend.php';
 
 // Kurt Castro | 10.13
+
 // Copied from register.php
+// Using request format agreed with Spandan + Andrew
+// Testing done locally until DB is completely set up
+
 // My Garage: list of user's cars, add/edit/remove buttons, popup with car details, dropdown list for car additions
+
 // To do: list, buttons, popup
 // Completed buttons (10.13)
 
@@ -137,11 +142,11 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
     <p>
     <button type="submit" name="action" value="add">Add</button>
     <button type="submit" name="action" value="edit">Edit</button>
-    <button type="submit" name="action" value="remove" formmethod="POST" onclick="return confirm('Are you sure you want to remove this car?')">Remove</button
+    <button type="submit" name="action" value="remove" formmethod="POST" onclick="return confirm('Are you sure you want to remove this car?')">Remove</button>
     </p>
 
     <?php // checks to see if list is empty instead of outputting "No cars yet" by default ?>
-    <?php if (!cars): ?>
+    <?php if (!$cars): ?>
     <p>You currently have 0 cars in your garage</p>
     <p>Click Add to add a car</p>
     <?php endif; ?>
