@@ -51,8 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 			$car_id = (int)$_POST['car_id'];
 		}
 
-
-
+                $reply = send_request([ // tells DB which car to delete
+			'type' => 'remove_car',
+			'session_key' => $_SESSION['session_key'],
+			'username' => $_SESSION['username'],
+			'car_id' => $car_id
+		]);
+		$msg = $reply['message'];
+	}
 }
 
 // decides which popup is displayed based on which button is clicked
