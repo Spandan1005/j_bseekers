@@ -7,9 +7,10 @@ require_once __DIR__ . '/../../RabbitMQ/path.inc';
 require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
 require_once __DIR__ . '/../lib/database.php';
+require_once __DIR__ . '/../lib/validate.php';
 
 
-function addCar($request): {
+function addCar($request): array {
 
 }
 

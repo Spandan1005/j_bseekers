@@ -50,8 +50,8 @@ function doLogin($request): array {
             // in validation.php library.  Andrew Galella 10/14/2026
             $session_key = bin2hex(random_bytes(32));
 
-            $stmt = $db2->prepare("insert into sessions (session_key, username, creation, expiration) values (?,?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()+7200)");
-            $stmt->bind_param('ss', hash('sha256',$session_key), $user);
+            $stmt = $db2->prepare("insert into sessions (session_key, username, creation, expiration) values (SHA2(?,256), ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()+7200)");
+            $stmt->bind_param('ss', $session_key, $user);
             $stmt->execute();
             $stmt->close();
             $db2->close();

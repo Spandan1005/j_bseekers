@@ -4,7 +4,7 @@
 // Andrew Galella, 10/14/2026
 
 function doValidate($user, $session_key): array {
-    if ($user === '' || $session_key === '') {
+    if (empty($user) || empty($session_key)) {
         return [
             'status' => 'error',
             'message' => 'All fields are required.'
@@ -14,7 +14,7 @@ function doValidate($user, $session_key): array {
         // pull session_key from table if possible. if it exists, then
         // we have a successful validation. failure otherwise.
         $db = getDB();
-        $stmt = $db->prepare("select creation from users where username = ? and session_key = SHA2(?,256) and expiration > UNIX_TIMESTAMP() limit 1");
+        $stmt = $db->prepare("select creation from sessions where username = ? and session_key = SHA2(?,256) and expiration > UNIX_TIMESTAMP() limit 1");
         $stmt->bind_param('ss', $user, $session_key);
         $stmt->execute();
         $stmt->bind_result($creation);
