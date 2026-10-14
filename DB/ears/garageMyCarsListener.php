@@ -25,8 +25,9 @@ function listMyCars($request): array {
         $stmt->bind_param('s', $user);
         $stmt->execute();
         $result = $stmt->get_result();
-        $myCars = $result->fetch_all(MYSQL_ASSOC);
+        $myCars = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
+        $db->close();
         return [
             'status' => 'success',
             'cars' => $myCars
