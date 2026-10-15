@@ -28,8 +28,8 @@ function viewCar($request): array {
         $stmt = $db->prepare("select car_id, year, make, model from cars where username = ? and car_id = ? limit 1");
         $stmt->bind_param('si', $user, $car_id);
         $stmt->execute();
-        $stmt->bind_result($car);
-        $fetched = $stmt->fetch();
+        $car = get_result()->fetch_assoc(); // need this cause otherwise you can't grab the whole row
+        //$fetched = $stmt->fetch();
         $stmt->close();
         //  ['status' => 'success',
         // 'car' => ['car_id' => 4, 'year' => 2021, 'make' => 'HONDA', 'model' => 'CR-V'],
@@ -42,7 +42,7 @@ function viewCar($request): array {
 
 
         // ^ this is the expected frontend response structure for this op according to Kurt
-        if (!($fetched && isset($car))) {
+        if ($car === null)) {
             return [
                 'status' => 'error',
                 'message' => 'car not found.'
@@ -68,7 +68,7 @@ function viewCar($request): array {
         $recalls = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
-        foreach ($recalls as $recall)
+        foreach ($recalls as &$recall)
         {
             $recall['date'] = (int)$recall['date'];
 
@@ -84,7 +84,7 @@ function viewCar($request): array {
         $complaints = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
         $db->close();
-        foreach ($complaints as $complaint)
+        foreach ($complaints as &$complaint)
         {
             $complaint['date'] = (int)$complaint['date'];
 
