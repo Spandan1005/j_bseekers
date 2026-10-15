@@ -13,3 +13,6 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
 // still making edits
 
 }
+
+
+// deprecated.  using refreshRecalls and refreshComplaints now

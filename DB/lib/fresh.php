@@ -1,9 +1,8 @@
 <?php
 
-// checks if cache needs to be refreshed, does so if necessary
-// cache is based on known cars in the cars table.
+// checks if cache needs to be refreshed,
 //
-// ^ scratch that, I split the helper from the cache refresh functions for
+// I split the helper from the cache refresh functions for
 // readability sake - Andrew Galella 10.15.2026
 
 require_once __DIR__ . '/../lib/database.php';
