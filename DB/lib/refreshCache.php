@@ -26,4 +26,6 @@ function isFresh(mysqli $db, string $table, int $year, string $make, string $mod
 }
 
 
-function refreshRecalls():
+function refreshRecalls(mysqli $db, string $table, int $year, string $make, string $model): array {
+// still making edits
+}
