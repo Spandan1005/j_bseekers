@@ -29,12 +29,13 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
 
     );
 
-    if ($reply['status'] !=== 'success')
+    if ($reply['status'] !== 'success')
     {
         return $reply;
     }
 
     try {
+        $db->begin_transaction(); // need to add this so that the delete-insert is atomic
         // we know there's more data so we're deleting the old data
         $stmt = $db->prepare("delete from recalls where year = ? and make = ? and model = ?");
         $stmt->bind_param('iss', $year, $make, $model);
@@ -53,11 +54,12 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
         {
             $camp = $recall['campaign'];
             $comp = $recall['component'];
-            $summary = $recall['summary'];
+            $summ = $recall['summary'];
             $date = (int)$recall['date'];
             $stmt->execute();
         }
         $stmt->close();
+        $db->commit(); // close transaction
         return [
             'status' => 'refreshed',
             'message' => 'recall cache refreshed.'

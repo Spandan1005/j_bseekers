@@ -32,12 +32,13 @@ function refreshComplaints(mysqli $db, int $year, string $make, string $model): 
 
     );
 
-    if ($reply['status'] !=== 'success')
+    if ($reply['status'] !== 'success')
     {
         return $reply;
     }
 
     try {
+        $db->begin_transaction(); // need to add this so that the delete-insert is atomic
         // we know there's more data so we're deleting the old data
         $stmt = $db->prepare("delete from complaints where year = ? and make = ? and model = ?");
         $stmt->bind_param('iss', $year, $make, $model);
@@ -54,11 +55,12 @@ function refreshComplaints(mysqli $db, int $year, string $make, string $model): 
         foreach ($reply['complaints'] as $complaint)
         {
             $comp = $complaint['component'];
-            $summary = $complaint['summary'];
+            $summ = $complaint['summary'];
             $date = (int)$complaint['date'];
             $stmt->execute();
         }
         $stmt->close();
+        $db->commit(); // close transaction
         return [
             'status' => 'refreshed',
             'message' => 'complaint cache refreshed.'

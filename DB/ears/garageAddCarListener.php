@@ -33,21 +33,27 @@ function addCar($request): array {
     }
     try {
         $db = getDB();
+        $stmt = $db->prepare("select car_id from cars where year = ? and make = ? and model = ? limit 1");
+        $stmt->bind_param('iss', $year, $make, $model);
+        $stmt->execute();
+        $stmt->bind_result($id);
+        $fetched = $stmt->fetch();
+        $stmt->close();
+
         $stmt = $db->prepare("insert into cars (username, year, make, model) values (?,?,?,?)");
         $stmt->bind_param('siss', $user, $year, $make, $model);
         $stmt->execute();
         $stmt->close();
 
-        $result = refreshRecalls($db, $year, $make, $model);
-        if ($result['status'] !== 'fresh' && $result['status'] !== 'refreshed')
+        if ($fetched && isset($id))
         {
-            return $result;
+            refreshRecalls($db, $year, $make, $model);
+            refreshComplaints($db, $year, $make, $model);
         }
-        $result = refreshComplaints($db, $year, $make, $model);
-        if ($result['status'] !== 'fresh' && $result['status'] !== 'refreshed')
-        {
-            return $result;
-        }
+
+        // ^ checks if the earlier select statement found this car to exist already
+        // if it does, leave it for the cron.  Andrew Galella 10.15.2026
+
 
         $db->close();
         return [
