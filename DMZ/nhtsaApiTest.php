@@ -37,6 +37,6 @@ echo "messages: " . ($data['Message'] ??''). "\n\n";
 $first = $data['results'][0] ?? null;
 if ($first) {
 echo "first recall:\n";
-echo "campaign: " . $first['NHTSACampaigneNumber'] . "\n";
+echo "campaign: " . $first['NHTSACampaignNumber'] . "\n";
 echo "component: " . $first['Component'] . "\n";
 echo "summary: " . $first['Summary'] . "\n"; }
