@@ -67,6 +67,7 @@ function refreshComplaints(mysqli $db, int $year, string $make, string $model): 
         ];
     }
     catch (Throwable $e) {
+        $db->rollback(); // this ensures that the database reverts to normal if the procedure fails.
         // catchall failure
         error_log('refreshComplaints: ' . $e->getMessage());
         return [

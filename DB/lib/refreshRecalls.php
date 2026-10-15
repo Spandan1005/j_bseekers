@@ -66,6 +66,7 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
         ];
     }
     catch (Throwable $e) {
+        $db->rollback(); // this ensures that the database reverts to normal if the procedure fails.
         // catchall failure
         error_log('refreshRecalls: ' . $e->getMessage());
         return [

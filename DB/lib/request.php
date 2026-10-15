@@ -5,7 +5,6 @@
 
 //All te file paths to directory and the ini file - Spandan Patel 9/29/26
 const MQ_DIR = __DIR__ . '/../../RabbitMQ';
-//const MQ_INI = 'testRabbitMQ.ini'; //no longer needed as each route is in MQ_ROUTES and it names its own ini file
 
 //defining requests - Spandan Ptel 9/29/26
 const MQ_ROUTES = [

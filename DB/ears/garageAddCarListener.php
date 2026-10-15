@@ -45,7 +45,7 @@ function addCar($request): array {
         $stmt->execute();
         $stmt->close();
 
-        if ($fetched && isset($id))
+        if (!($fetched && isset($id)))  // added ! to reverse the condition
         {
             refreshRecalls($db, $year, $make, $model);
             refreshComplaints($db, $year, $make, $model);
