@@ -8,11 +8,15 @@ const MQ_DIR = __DIR__ . '/../../RabbitMQ';
 const MQ_ROUTES = [
 'login' => ['testRabbitMQ.ini', 'loginServer'],
 'register' => ['testRabbitMQ.ini', 'registerServer'],
+'logout' => ['testRabbitMQ.ini', 'logoutServer'],
 'get_garage' => ['garage.ini', 'garageMyCars'],
 'add_car' => ['garage.ini', 'garageAddCar'],
 'get_car' => ['garage.ini', 'garageCar'],
-'edit_car' => ['garage.ini', 'garageEditCar'],
-'remove_car' => ['garage.ini', 'garageRemoveCar']];
+//'edit_car' => ['garage.ini', 'garageEditCar'],
+'remove_car' => ['garage.ini', 'garageRemoveCar'],
+'get_years' => ['vehicle.ini', 'vehicleYears'],
+'get_makes' => ['vehicle.ini', 'vehicleMakes'],
+'get_models' => ['vehicle.ini', 'vehicleModels']];
 
 function mq_error($message) {
 return ['status' => 'error', 'message' => $message]; } //follows the naming convention from Kurt's stuff
