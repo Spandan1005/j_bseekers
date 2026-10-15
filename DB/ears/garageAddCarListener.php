@@ -8,6 +8,8 @@ require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
 require_once __DIR__ . '/../lib/database.php';
 require_once __DIR__ . '/../lib/validate.php';
+require_once __DIR__ . '/../lib/refreshComplaints.php';
+require_once __DIR__ . '/../lib/refreshRecalls.php';
 
 
 function addCar($request): array {
@@ -35,6 +37,18 @@ function addCar($request): array {
         $stmt->bind_param('siss', $user, $year, $make, $model);
         $stmt->execute();
         $stmt->close();
+
+        $result = refreshRecalls($db, $year, $make, $model);
+        if ($result['status'] !== 'fresh' && $result['status'] !== 'refreshed')
+        {
+            return $result;
+        }
+        $result = refreshComplaints($db, $year, $make, $model);
+        if ($result['status'] !== 'fresh' && $result['status'] !== 'refreshed')
+        {
+            return $result;
+        }
+
         $db->close();
         return [
             'status' => 'success',

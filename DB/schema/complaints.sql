@@ -5,6 +5,6 @@ create table complaints (
     year smallint unsigned not null,
     make varchar(50) not null,
     model varchar(50) not null,
-    camp_date bigint unsigned not null,
+    comp_date bigint unsigned not null,
     cache_date bigint unsigned not null default (unix_timestamp())
 );

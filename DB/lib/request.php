@@ -12,8 +12,8 @@ const MQ_ROUTES = [
 'get_years' => ['dmz.ini', 'dmzYears'],
 'get_makes' => ['dmz.ini', 'dmzMakes'],
 'get_models' => ['dmz.ini', 'dmzModels'],
-'refreshRecall' => ['dmz.ini', 'dmzRecalls'],
-'refreshComplaint' => ['dmz.ini', 'dmzComplaints']
+'refreshRecalls' => ['dmz.ini', 'dmzRecalls'],
+'refreshComplaints' => ['dmz.ini', 'dmzComplaints']
 ];
 
 function mq_error($message) {
