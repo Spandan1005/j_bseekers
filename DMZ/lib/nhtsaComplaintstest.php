@@ -1,21 +1,17 @@
 //This test is for API - Evans
 
 <?php
-
-//sample vehicle for testing (hardcoded)
-$make = 'acura';
-$model = 'rdx';
-$year = 2012;
+require_once __DIR__ . '/../lib/database.php';
 
 $url = 'https://api.nhtsa.gov/recalls/recallsByVehicle?' . http_build_query([
+        'type' => $refreshComplaints,
+        'year' => $year
 	'make' => $make,
 	'model' => $model,
-	'modelYear' => $year,
 ]);
 
 // making the actual requst (outputs as plain text)
-$body =@file_get_contents($url);
-header ('Content-Type: text/plain');
+$body =file_get_contents($url);
 
 //Error handling
 if ($body ===false){
@@ -31,12 +27,8 @@ exit;
 }
 
 //Display readable results
-echo "count: " . ($data['Count'] ?? 'n/a') . "\n";
-echo "messages: " . ($data['Message'] ??''). "\n\n";
-
-$first = $data['results'][0] ?? null;
-if ($first) {
-echo "first recall:\n";
-echo "campaign: " . $first['NHTSACampaigneNumber'] . "\n";
 echo "component: " . $first['Component'] . "\n";
-echo "summary: " . $first['Summary'] . "\n"; }
+echo "summary: " . $first['Summary'] . "\n"; 
+echo "date: " . $first['date'] . "\n"; 
+
+

@@ -1,6 +1,6 @@
-// Ninja API test
 
 <?php
+//Ninja API test- Evans
 //sample vehicle for testing (hardcoded)
 $make = 'bmw';
 $model = '3 Series';
@@ -15,7 +15,7 @@ $url = 'https://api.api-ninjas.com/v1/cars?' . http_build_query([
 $options = [
 'http'=> [
 'method' => 'GET', 
-'header'=> "X-Api-Key: uqpfsxWpCMKJsXZO8yEPh4kOIxwhBrzOzGgHGXtN\r\n"
+'header'=> "X-Api-Key:" . getenv('apiNinja') . "\r\n"
 ]
 ];
 

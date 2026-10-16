@@ -1,4 +1,4 @@
-//This test is for API - Evans
+//This test is for API - Evans (Not in use rn, used as template rn)
 
 <?php
 
@@ -7,21 +7,14 @@ $make = 'acura';
 $model = 'rdx';
 $year = 2012;
 
-$url = 'https://api.nhtsa.gov/complaints/complaintsByVehicle?' . http_build_query([
+$url = 'https://api.nhtsa.gov/recalls/recallsByVehicle?' . http_build_query([
 	'make' => $make,
 	'model' => $model,
 	'modelYear' => $year,
 ]);
 
-$options = [
-'http'=> [
-'method' => 'GET'
-]
-];
-
 // making the actual requst (outputs as plain text)
-$context = stream_context_create($options);
-$body = file_get_contents($url,false,$context);
+$body =@file_get_contents($url);
 header ('Content-Type: text/plain');
 
 //Error handling
@@ -37,15 +30,13 @@ echo "Got a reply but it wasn't in JSON format.\n"; //the api is supposed to out
 exit;
 }
 
-print_r ($data);
-
 //Display readable results
 echo "count: " . ($data['Count'] ?? 'n/a') . "\n";
 echo "messages: " . ($data['Message'] ??''). "\n\n";
 
 $first = $data['results'][0] ?? null;
-// if ($first) {
-// echo "first recall:\n";
-// echo "campaign: " . $first['NHTSACampaigneNumber'] . "\n";
-// echo "component: " . $first['Component'] . "\n";
-// echo "summary: " . $first['Summary'] . "\n"; }
+if ($first) {
+echo "first recall:\n";
+echo "campaign: " . $first['NHTSACampaignNumber'] . "\n";
+echo "component: " . $first['Component'] . "\n";
+echo "summary: " . $first['Summary'] . "\n"; }
