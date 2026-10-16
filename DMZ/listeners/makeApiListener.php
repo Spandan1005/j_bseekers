@@ -4,10 +4,11 @@
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
 require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
+require_once __DIR__ . '/../lib/nhtsaVehicle.php';
 
 function doMakes($request): array {
 	try{
-	if (!is_array($request));{
+	if (!is_array($request)){
 	return nhtsa_error('Bad Request');
 	}
 	return nhtsa_handle($request);
@@ -18,6 +19,7 @@ function doMakes($request): array {
 	}
 }
 
+chdir(__DIR__ . '/../../RabbitMQ');
 $server = new rabbitMQServer("dmz.ini", "dmzMakes");
 echo "NHTSA Makes Listener | UP | Listening to 'Makes'..." . PHP_EOL;
 $server->process_requests('doMakes');

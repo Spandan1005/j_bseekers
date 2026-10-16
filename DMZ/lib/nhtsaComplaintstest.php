@@ -1,17 +1,23 @@
-
 <?php
+
 //This test is for API - Evans
+function nhtsa_error($message) {
+return ['status' => 'error', 'message' => $message];
+}
 
 function nhtsa_handle($request) {
 
-$$refreshComplaints = $request['type'] ?? '';
-$$year = $request['year'] ?? '';
-$$make = $request['make'] ?? '';
-$$model = $request['model'] ?? '';
+
+$year = (int)($request['year'] ?? 0);
+$make = trim($request['make'] ?? '');
+$model = trim($request['model'] ?? '');
+
+if ($year == 0 || $make == '' || $model ==''){
+return nhtsa_error('year, make and model are required');
+}
 
 $url = 'https://api.nhtsa.gov/complaints/complaintsByVehicle?' . http_build_query([
-        'type' => $refreshComplaints,
-        'year' => $year,
+        'modelYear' => $year,
 	'make' => $make,
 	'model' => $model,
 ]);
@@ -21,28 +27,29 @@ $body =@file_get_contents($url);
 
 //Error handling
 if ($body ===false){
-echo "Request failed. \n";
-exit;
+return nhtsa_error("Request failed.");
 }
 
 //converts json to php array
 $data = json_decode($body, true);
 if (!is_array($data)) {
-echo "Got a reply but it wasn't in JSON format.\n"; //the api is supposed to output a JSON format only
-exit;
+return nhtsa_error("Got a reply but it wasn't in JSON format."); //the api is supposed to output a JSON format only
 }
 
 $filteredResults =[];
 
 //Display expected results
 
-foreach ($data['results'] as $complaint) {
+foreach ($data['results'] ?? [] as $complaint) {
+
+$date = DateTime::createdFromFormat('!m/d/Y', $compliant['dateComplaintFiled'] ?? '');
+
 $filteredResults[] = [
  "component: " =>$complaint['Component'] ?? 'N/A',
  "summary: "=>$complaint['summary'] ?? 'N/A', 
- "date: " =>$complaint['date'] ?? 'N/A',
+ 'date' => $date ? $date->getTimestamp() : 0,
 ];
 }
-return $filteredResults;
+return ['status' => 'success', 'complaints' => $filteredResults];
 }
 

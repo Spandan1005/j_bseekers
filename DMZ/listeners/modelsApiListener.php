@@ -4,11 +4,11 @@
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
 require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
-require_once __DIR__ . '/../../lib/nhtsaApiTest.php';
+require_once __DIR__ . '/../lib/nhtsaVehicle.php';
 
 function doModels($request): array {
 	try{
-	if (!is_array($request));{
+	if (!is_array($request)){
 	return nhtsa_error('Bad Request');
 	}
 	return nhtsa_handle($request);
@@ -19,8 +19,9 @@ function doModels($request): array {
 	}
 }
 
+chdir(__DIR__ . '/../../RabbitMQ');
 $server = new rabbitMQServer("dmz.ini", "dmzModels");
-echo "NHTSA Recall Listener | UP | Listening to 'Models'..." . PHP_EOL;
+echo "NHTSA Model Listener | UP | Listening to 'Models'..." . PHP_EOL;
 $server->process_requests('doModels');
 echo "NHTSA Listener | DN | Exiting..." . PHP_EOL;
 exit();

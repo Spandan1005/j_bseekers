@@ -4,10 +4,11 @@
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
 require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
+require_once __DIR__ . '/../lib/nhtsaVehicle.php';
 
 function doYears($request): array {
 	try{
-	if (!is_array($request));{
+	if (!is_array($request)){
 	return nhtsa_error('Bad Request');
 	}
 	return nhtsa_handle($request);
@@ -18,6 +19,7 @@ function doYears($request): array {
 	}
 }
 
+chdir(__DIR__ . '/../../RabbitMQ');
 $server = new rabbitMQServer("dmz.ini", "dmzYears");
 echo "NHTSA Year Listener | UP | Listening to 'Years'..." . PHP_EOL;
 $server->process_requests('doYears');
