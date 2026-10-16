@@ -124,10 +124,8 @@ $makes = [];
 $models = [];
 
 if ($action === 'add') {
-	$reply = send_request([ // all model years NHTSA has complaint data for
+	$reply = send_request([ // all model years NHTSA has complaint data for (straight to Evans)
 		'type' => 'get_years',
-		'session_key' => $_SESSION['session_key'],
-		'username' => $_SESSION['username'],
 	]);
 	if (isset($reply['years'])) {
 		$years = $reply['years'];
@@ -135,8 +133,6 @@ if ($action === 'add') {
 	if ($pick_year != 0) { // only lists makes that were available from selected year
 		$reply = send_request([ 
 			'type' => 'get_makes',
-			'session_key' => $_SESSION['session_key'],
-			'username' => $_SESSION['username'],
 			'year' => $pick_year,
 		]);
 		if (isset($reply['makes'])) {
@@ -146,8 +142,6 @@ if ($action === 'add') {
 	if ($pick_year != 0 && $pick_make != '') { // models that exist for that year + make
 		$reply = send_request([ 
 			'type' => 'get_models',
-			'session_key' => $_SESSION['session_key'],
-			'username' => $_SESSION['username'],
 			'year' => $pick_year,
 			'make' => $pick_make,
 		]);
@@ -276,7 +270,8 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
             <p>No recalls found</p>
             <?php endif; ?>
 	    <?php foreach ($recalls as $r): ?>
-            <p><strong><?= htmlspecialchars($r['component']) ?></strong> - <?= date('m/d/Y', (int)$r['date']) ?></p>
+	    <p><strong><?= htmlspecialchars($r['component']) ?></strong> - <?= date('m/d/Y', (int)$r['date']) ?></p>
+            <p>Campaign: <?= htmlspecialchars($r['campaign']) ?></p>
             <p><?= htmlspecialchars($r['summary']) ?></p>
             <?php endforeach; ?>
 
