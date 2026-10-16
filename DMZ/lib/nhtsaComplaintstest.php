@@ -1,7 +1,7 @@
 //This test is for API - Evans
 
 <?php
-require_once __DIR__ . '/../lib/database.php';
+require_once __DIR__ . '/../listeners/ComplaintListener.php';
 
 $url = 'https://api.nhtsa.gov/recalls/recallsByVehicle?' . http_build_query([
         'type' => $refreshComplaints,
