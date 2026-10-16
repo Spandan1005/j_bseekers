@@ -43,7 +43,7 @@ function doLogout($request): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("testRabbitMQ.ini","logoutListener");
+$server = new rabbitMQServer("testRabbitMQ.ini","logoutServer");
 echo "Logout Listener | UP | Listening to 'logoutServer'..." .PHP_EOL;
 $server->process_requests('doLogout');
 echo "Logout Listener | DN | Exiting...".PHP_EOL;

@@ -42,7 +42,7 @@ function viewCar($request): array {
 
 
         // ^ this is the expected frontend response structure for this op according to Kurt
-        if ($car === null)) {
+        if ($car === null) {
             return [
                 'status' => 'error',
                 'message' => 'car not found.'
