@@ -1,17 +1,23 @@
-//This test is for API - Evans
 
 <?php
-require_once __DIR__ . '/../listeners/ComplaintListener.php';
+//This test is for API - Evans
 
-$url = 'https://api.nhtsa.gov/recalls/recallsByVehicle?' . http_build_query([
+function nhtsa_handle($request) {
+
+$$refreshComplaints = $request['type'] ?? '';
+$$year = $request['year'] ?? '';
+$$make = $request['make'] ?? '';
+$$model = $request['model'] ?? '';
+
+$url = 'https://api.nhtsa.gov/complaints/complaintsByVehicle?' . http_build_query([
         'type' => $refreshComplaints,
-        'year' => $year
+        'year' => $year,
 	'make' => $make,
 	'model' => $model,
 ]);
 
 // making the actual requst (outputs as plain text)
-$body =file_get_contents($url);
+$body =@file_get_contents($url);
 
 //Error handling
 if ($body ===false){
@@ -26,9 +32,17 @@ echo "Got a reply but it wasn't in JSON format.\n"; //the api is supposed to out
 exit;
 }
 
-//Display readable results
-echo "component: " . $first['Component'] . "\n";
-echo "summary: " . $first['Summary'] . "\n"; 
-echo "date: " . $first['date'] . "\n"; 
+$filteredResults =[];
 
+//Display expected results
+
+foreach ($data['results'] as $complaint) {
+$filteredResults[] = [
+ "component: " =>$complaint['Component'] ?? 'N/A',
+ "summary: "=>$complaint['summary'] ?? 'N/A', 
+ "date: " =>$complaint['date'] ?? 'N/A',
+];
+}
+return $filteredResults;
+}
 

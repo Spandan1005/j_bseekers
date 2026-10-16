@@ -4,6 +4,8 @@
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
 require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
+require_once __DIR__ . '/../../lib/nhtsaComplaintstest.php';
+
 
 function doComplaints($request): array {
 	try{
@@ -18,7 +20,8 @@ function doComplaints($request): array {
 	}
 }
 
-$server = new rabbitMQServer("dmz.ini", "dmzCompliants");
+
+$server = new rabbitMQServer("dmz.ini", "dmzComplaints");
 echo "NHTSA Listener | UP | Listening to 'NHTSA Complaints'..." . PHP_EOL;
 $server->process_requests('doComplaints');
 echo "NHTSA Listener | DN | Exiting..." . PHP_EOL;
