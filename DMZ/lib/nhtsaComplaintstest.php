@@ -42,11 +42,11 @@ $filteredResults =[];
 
 foreach ($data['results'] ?? [] as $complaint) {
 
-$date = DateTime::createdFromFormat('!m/d/Y', $compliant['dateComplaintFiled'] ?? '');
+$date = DateTime::createFromFormat('!m/d/Y', $complaint['dateComplaintFiled'] ?? '');
 
 $filteredResults[] = [
- "component: " =>$complaint['Component'] ?? 'N/A',
- "summary: "=>$complaint['summary'] ?? 'N/A', 
+ "component" =>$complaint['Component'] ?? 'N/A',
+ "summary"=>$complaint['summary'] ?? 'N/A', 
  'date' => $date ? $date->getTimestamp() : 0,
 ];
 }

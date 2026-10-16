@@ -22,7 +22,7 @@ $url = 'https://api.nhtsa.gov/recalls/recallsByVehicle?' . http_build_query([
 ]);
 
 // making the actual requst (outputs as plain text)
-$body =file_get_contents($url);
+$body =@file_get_contents($url);
 
 //Error handling
 if ($body ===false){
