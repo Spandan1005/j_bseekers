@@ -28,7 +28,7 @@ function viewCar($request): array {
         $stmt = $db->prepare("select car_id, year, make, model from cars where username = ? and car_id = ? limit 1");
         $stmt->bind_param('si', $user, $car_id);
         $stmt->execute();
-        $car = get_result()->fetch_assoc(); // need this cause otherwise you can't grab the whole row
+        $car = $stmt->get_result()->fetch_assoc(); // need this cause otherwise you can't grab the whole row
         //$fetched = $stmt->fetch();
         $stmt->close();
         //  ['status' => 'success',
