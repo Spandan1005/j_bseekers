@@ -1,6 +1,6 @@
 create table complaints (
     complaint_id bigint unsigned not null auto_increment primary key,
-    component varchar(50) not null,
+    component varchar(255) not null,
     _summary text not null,
     year smallint unsigned not null,
     make varchar(50) not null,

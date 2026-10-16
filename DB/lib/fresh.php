@@ -15,8 +15,9 @@ function isFresh(mysqli $db, string $table, int $year, string $make, string $mod
     $stmt->bind_param('iss', $year, $make, $model);
     $stmt->execute();
     $stmt->bind_result($date);
+    $fetched = $stmt->fetch();
     $stmt->close();
-    if ($date === null) {
+    if ($fetched && $date === null) {
         return false;
     }
     return (time() - (int)$date) <= 7200;
