@@ -42,6 +42,52 @@ if (isset($_GET['mode'])) {
 	$pick_model = trim($_GET['model']);
 }
 
+// write review form / just copied from previous myGarage.php 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitted
+	$year = (int)$_POST['year']; 
+	$make = trim($_POST['make']);
+	$model = trim($_POST['model']);
+	$rating = (int)$_POST['rating'];
+	$text = trim($_POST['text']));
+
+        if ($rating < 1 || $rating > 5) { // server-side checks for empty dropdowns
+		$msg = 'Rating must be 1-5.';
+	} elseif ($text == '') {
+		$msg = 'Write something for your review.';
+	} else {
+		$reply = send_request([ // review tied to year/make/model
+			'type' => 'write_review',
+			'session_key' => $_SESSION['session_key'],
+			'username' => $_SESSION['username'],
+			'year' => $year,
+			'make' => $make,
+			'model' => $model,
+			'rating' => $rating,
+			'text' => $text,
+		]);
+		$msg = $reply['message'];
+	}
+}
+       
+	if ($action === 'remove') { // remove button (now works only if car is selected)
+		$car_id = 0;
+		if (isset($_POST['car_id'])) {
+			$car_id = (int)$_POST['car_id'];
+		}
+
+                if ($car_id == 0) { // check for no car picked before remove
+			$msg = 'Select a car first';
+		} else {
+			$reply = send_request([
+				'type' => 'remove_car',
+				'session_key' => $_SESSION['session_key'],
+				'username' => $_SESSION['username'],
+				'car_id' => $car_id,
+			]);
+			$msg = $reply['message'];
+		}
+	}
+}
 // dropdown lists for the search popup (same as add in myGarage.php)
 // in NHTSA's order: year, make model
 // each dropdown only loads once previous one has been selected 
@@ -163,9 +209,30 @@ if ($pick_year != 0 && $pick_make != '' && $pick_model != '') {
           <?php else: ?>
 	<option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
           <?php endif; ?>
-        <?php endforeach; ?>
-      </select>
-    </div>
+	<?php endforeach; ?>
+        <h3>Write a Review</h3>
+        <?php // which car the review is for ?>
+        <form method="POST" action="reviews.php">
+            <input type="hidden" name="year" value="<?= (int)$pick_year ?>" />
+            <input type="hidden" name="make" value="<?= htmlspecialchars($pick_make) ?>" />
+	    <input type="hidden" name="model" value="<?= htmlspecialchars($pick_model) ?>" />
+
+            <div>
+              <label for="rating">Rating</label>
+              <select id="rating" name="rating" required>
+         <option value="">-- Pick a rating --</option>
+         <option value="5">5 - Excellent</option>
+         <option value="4">4 - Good</option>
+         <option value="3">3 - Okay</option>
+         <option value="2">2 - Bad</option>
+         <option value="1">1 - Terrible</option>
+           </select>
+         </div>
+	 <div>
+           <label for="text">Review</label>
+           <textarea id="text" name="text" required maxlength="1000"></textarea>
+         </div>
+         <button type="submit">Post Review</button>
 </form>
 
 <?php if ($searched): // only shows when car is picked ?>
