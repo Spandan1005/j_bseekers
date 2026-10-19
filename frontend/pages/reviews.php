@@ -44,9 +44,9 @@ if (isset($_GET['mode'])) {
 
 // write review form / just copied from previous myGarage.php 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitted
-	$year = (int)$_POST['year']; 
-	$make = trim($_POST['make']);
-	$model = trim($_POST['model']);
+	$pick_year = (int)$_POST['year']; // keeps picked so review shows after posting
+	$pick_make = trim($_POST['make']);
+	$pick_model = trim($_POST['model']);
 	$rating = (int)$_POST['rating'];
 	$text = trim($_POST['text']));
 
@@ -59,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 			'type' => 'write_review',
 			'session_key' => $_SESSION['session_key'],
 			'username' => $_SESSION['username'],
-			'year' => $year,
-			'make' => $make,
-			'model' => $model,
+			'year' => $pick_year,
+			'make' => $pick_make,
+			'model' => $pick_model,
 			'rating' => $rating,
 			'text' => $text,
 		]);
