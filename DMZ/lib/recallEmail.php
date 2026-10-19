@@ -5,7 +5,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 
 function email_error ($messages) {
-return ['status' => 'error', 'message' => $message];
+return ['status' => 'error', 'message' => $messages];
 }
 
 //over here is what builds the initial email subject and plain text body
@@ -14,7 +14,7 @@ function email_body($username, $year, $make, $model, $campaigns) {
 $subject = "New recall has been issued for your $year $make $model";
 
 $body = "Hello $username, \n\n";
-$body = "A new recall has been issued for your $year $make $model:\n\n";
+$body .= "A new recall has been issued for your $year $make $model:\n\n";
 
 foreach ($campaigns as $c) {
 $date = 'N/A';
@@ -46,7 +46,7 @@ if ($to == '' || $username == '' || $year == 0 || $make == '' || $model == '') {
 return email_error('to, username, year, make and model are required');
 }
 
-if (!filter_var($t0, FILTER_VALIDATE_EMAIL)){
+if (!filter_var($to, FILTER_VALIDATE_EMAIL)){
 return email_error('Invalid email address');
 }
 if (!is_array($campaigns) || count($campaigns) == 0) {
@@ -104,5 +104,5 @@ return email_error('Email could not be sent');
 }
 
 // reply goes back to whoever sent the recall_email request
-return ['status' => 'success', 'message' => 'Email sent'];
+return ['status' => 'ok', 'message' => 'Email sent'];
 }

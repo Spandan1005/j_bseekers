@@ -45,11 +45,16 @@ return nhtsa_error("Got a reply but it wasn't in JSON format");
 }
 
 $results = [];
+
 foreach ($data['results'] ?? [] as $row) {
 	if (isset($row[$field])) {
+		if ($field == 'modelYear' && $row[$field] == '9999') { // fix for year 9999
+			continue;
+		}
 		$results[] = $row[$field];
 	}
 }
+
 $results = array_values(array_unique($results));
 
 if ($type == 'get_years') {

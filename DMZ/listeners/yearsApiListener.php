@@ -20,7 +20,7 @@ function doYears($request): array {
 }
 
 chdir(__DIR__ . '/../../RabbitMQ');
-$server = new rabbitMQServer("dmz.ini", "dmzYears");
+$server = new rabbitMQServer("vehicle.ini", "vehicleYears");
 echo "NHTSA Year Listener | UP | Listening to 'Years'..." . PHP_EOL;
 $server->process_requests('doYears');
 echo "NHTSA Year | DN | Exiting..." . PHP_EOL;
