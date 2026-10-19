@@ -51,8 +51,27 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
             $stmt->execute();
             $stmt->bind_result($recall_id);
             $fetched = $stmt->fetch();
-            if ($fetched && !isset($recall_id)) {
-                $stmt2 = $db->prepare("");
+            if (!$fetched && !isset($recall_id)) {
+                $stmt2 = $db->prepare("select distinct users.username, users.email from cars join users on cars.username = users.username where cars.year = ? and cars.make = ? and cars.model = ? and users.opt_in = 1");
+                $stmt2->bind_param('iss', $year, $make, $model);
+                $stmt2->execute();
+                $recip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                $stmt2->close();
+
+                send_req_oneway(
+                    [
+                    'type' => 'recallEmail',
+                    'recipients' => $recip,
+                    'recall_info' => [
+                        'campaign' => $camp,
+                        'component' => $comp,
+                        'summary' => $summ,
+                        'year' => $year,
+                        'make' => $make,
+                        'model' => $model,
+                        'date' => $date]
+                    ]
+                );
             }
         }
         $stmt->close();
