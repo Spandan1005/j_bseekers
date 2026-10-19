@@ -35,6 +35,29 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
     }
 
     try {
+        $camp = '';
+        $comp = '';
+        $summ = '';
+        $date = 0;
+
+        $stmt = $db->prepare("select recall_id from recalls where campaign = ? and year = ? and make = ? and model = ? limit 1");
+        $stmt->bind_param('siss', $camp, $year, $make, $model);
+        foreach ($reply['recalls'] as $recall)
+        {
+            $camp = $recall['campaign'];
+            $comp = $recall['component'];
+            $summ = $recall['summary'];
+            $date = (int)$recall['date'];
+            $stmt->execute();
+            $stmt->bind_result($recall_id);
+            $fetched = $stmt->fetch();
+            if ($fetched && !isset($recall_id)) {
+                $stmt2 = $db->prepare("");
+            }
+        }
+        $stmt->close();
+
+
         $db->begin_transaction(); // need to add this so that the delete-insert is atomic
         // we know there's more data so we're deleting the old data
         $stmt = $db->prepare("delete from recalls where year = ? and make = ? and model = ?");

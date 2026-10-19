@@ -26,8 +26,7 @@ function accountGet($request): {
         $stmt = $db->prepare("select username, email, opt_in as recall_emails from users where username = ? limit 1");
         $stmt->bind_param('s', $user);
         $stmt->execute();
-        $result = $stmt->get_result();
-        $acct = $result->fetch_all(MYSQLI_ASSOC);
+        $acct = $stmt->get_result()->fetch_assoc();
         $stmt->close();
         $db->close();
         return [
