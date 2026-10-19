@@ -37,6 +37,11 @@ if (isset($_GET['make'])) {
 	$pick_make = trim($_GET['make']);
 }
 
+$pick_model = '';
+if (isset($_GET['mode'])) {
+	$pick_model = trim($_GET['model']);
+}
+
 // dropdown lists for the search popup (same as add in myGarage.php)
 // in NHTSA's order: year, make model
 // each dropdown only loads once previous one has been selected 
@@ -78,6 +83,29 @@ if ($makes) {
 $model_disabled = 'disabled';
 if ($models) {
 	$model_disabled = '';
+}
+
+// need to load ratings from DB when all dropdowns are picked
+// each review tied to year/make/model
+$searched = false;
+$avg_rating = 0;
+$reviews = [];
+if ($pick_year != 0 && $pick_make != '' && $pick_model != '') {
+	$searched = true;
+	$reply = send_request([
+		'type' => 'get_reviews',
+		'session_key' => $_SESSION['session_key'],
+		'username' => $_SESSION['username'],
+		'year' => $pick_year,
+		'make' => $pick_make,
+		'model' => $pick_model,
+	]);
+	if (isset($reply['avg_rating'])) {
+		$avg_rating = $reply['avg_rating'];
+	}
+	if (isset($reply['reviews'])) {
+		$reviews = $reply['reviews'];
+	}
 }
 ?>
 
@@ -135,6 +163,21 @@ if ($models) {
       </select>
     </div>
 </form>
+
+<?php if ($searched): // only shows when car is picked ?>
+<h3><?= htmlspecialchar($pick_year . ' ' . $pick_make . ' ' . $pick_model) ?></h3>
+
+<?php if (!$reviews): ?>
+<p>No reviews yet. Be the first to rwite one.</p>
+<?php else: ?>
+<p>Average rating: <?= htmlspecialchars($avg_rating) ?> / 5</p>
+<?php endif; ?>
+
+<?php foreach ($review as $r): // need to escape since reviews are typed ?>
+<p><strong><?= htmlspecialchars($r['username']) ?></strong> - <?= (int)$r['rating'] ?> / 5 - <?= date('m/d/Y', (int)$r['date']) ?></p>
+<p><?= htmlspecialchars($r['text']) ?></p>
+<?php endforeach; ?>
+<?php endif; ?>
 
 <script>
 let popup = document.getElementById('popup'); // only display when popup was asked for
