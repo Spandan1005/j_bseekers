@@ -158,7 +158,11 @@ if ($pick_year != 0 && $pick_make != '' && $pick_model != '') {
       <select id="model" name="model" <?= $model_disabled ?>>
         <option value="">-- Pick a Model --</option>
         <?php foreach ($models as $m): ?>
-          <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
+      <?php if ($m === $pick_model): // keeps selected model after reload ?>
+        <option value="<?= htmlspecialchars($m) ?>" selected><?= htmlspecialchars ($m) ?></option>
+          <?php else: ?>
+	<option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
+          <?php endif; ?>
         <?php endforeach; ?>
       </select>
     </div>
