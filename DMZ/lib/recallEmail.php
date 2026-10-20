@@ -58,9 +58,9 @@ $model = preg_replace('/[\r\n]+/', ' ', $model);
 
 // gmail login comes from the DMZ server's environment (same way apiNinja gets its key), never from the code
 
-$env =@parse_ini_file(__DIR__ . '/../emails.env') ?: [];
-$user = getenv('MAIL_USER');
-$pass = getenv('MAIL_PASS');
+$env = @parse_ini_file(__DIR__ . '/../emails.env') ?: [];
+$user = getenv('MAIL_USER') ?: ($env['MAIL_USER'] ?? '');
+$pass = getenv('MAIL_PASS') ?: ($env['MAIL_PASS'] ?? '');
 if (!$user || !$pass) {
 return email_error('Mail login is missing on the DMZ server');
 }
