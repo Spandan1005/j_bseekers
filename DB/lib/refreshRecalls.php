@@ -111,13 +111,13 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
                 [
                     'type' => 'recallEmail',
                     'recipients' => $recip,  // this is an array ['...', '...', 'etc']
-                    'campaign' => $camp,
-                    'component' => $comp,
-                    'summary' => $summ,
+                    'campaign' => $recall['campaign'],
+                    'component' => $recall['component'],
+                    'summary' => $recall['summary'],
                     'year' => $year,
                     'make' => $make,
                     'model' => $model,
-                    'date' => $date
+                    'date' => (int)$recall['date']
                 ]);
             }
         }
