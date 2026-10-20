@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// set acct opt in listener.  listens on accountSetRecallEmail
+// set acct opt in listener.  listens on accountSetRecallEmails
 // Andrew Galella, written 10.19.2026
 
 // __DIR__ makes sure the file seeks the other files starting from
@@ -46,8 +46,8 @@ function setAcctOpt($request): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("account.ini","accountSetRecallEmail");
-echo "Set Account Recall Email Listener | UP | Listening to 'accountSetRecallEmail'..." .PHP_EOL;
+$server = new rabbitMQServer("account.ini","accountSetRecallEmails");
+echo "Set Account Recall Email Listener | UP | Listening to 'accountSetRecallEmails'..." .PHP_EOL;
 $server->process_requests('setAcctOpt');
 echo "Set Account Recall Email Listener | DN | Exiting...".PHP_EOL;
 exit();

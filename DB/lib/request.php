@@ -59,7 +59,7 @@ function send_request(array $payload){
 
 }
 
-function send_req_oneway($message) {
+function send_req_oneway(array $payload) {
 		$type = $payload['type'] ?? '';
 		if (!isset(MQ_ROUTES[$type])) {
 			return mq_error('Unknown request type.');
