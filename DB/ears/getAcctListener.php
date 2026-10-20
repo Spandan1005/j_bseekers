@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
 require_once __DIR__ . '/../lib/database.php';
 require_once __DIR__ . '/../lib/validate.php';
 
-function accountGet($request): {
+function accountGet($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
 

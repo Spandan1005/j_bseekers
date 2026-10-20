@@ -35,54 +35,44 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
     }
 
     try {
-        $camp = '';
-        $comp = '';
-        $summ = '';
-        $date = 0;
+        $db->begin_transaction(); // need to add this so that the delete-insert is atomic
 
+
+
+
+        $camp = '';
+        $newRecalls = [];
         $stmt = $db->prepare("select recall_id from recalls where campaign = ? and year = ? and make = ? and model = ? limit 1");
         $stmt->bind_param('siss', $camp, $year, $make, $model);
         foreach ($reply['recalls'] as $recall)
         {
             $camp = $recall['campaign'];
-            $comp = $recall['component'];
-            $summ = $recall['summary'];
-            $date = (int)$recall['date'];
-            $stmt->execute();
-            $stmt->bind_result($recall_id);
-            $fetched = $stmt->fetch();
-            if (!$fetched && !isset($recall_id)) {
-                $stmt2 = $db->prepare("select distinct users.username, users.email from cars join users on cars.username = users.username where cars.year = ? and cars.make = ? and cars.model = ? and users.opt_in = 1");
-                $stmt2->bind_param('iss', $year, $make, $model);
-                $stmt2->execute();
-                $recip = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-                $stmt2->close();
 
-                send_req_oneway(
-                    [
-                    'type' => 'recallEmail',
-                    'recipients' => $recip,
-                    'recall_info' => [
-                        'campaign' => $camp,
-                        'component' => $comp,
-                        'summary' => $summ,
-                        'year' => $year,
-                        'make' => $make,
-                        'model' => $model,
-                        'date' => $date]
-                    ]
-                );
+            $stmt->execute();
+            $stmt->store_result();
+            if ($stmt->num_rows === 0)
+            {
+                $newRecalls[] = $recall;
             }
+            $stmt->free_result();
         }
+
         $stmt->close();
 
 
-        $db->begin_transaction(); // need to add this so that the delete-insert is atomic
+        // ^ find all instances where the recall found is not in the database and save that recall for later notification
+
+
         // we know there's more data so we're deleting the old data
         $stmt = $db->prepare("delete from recalls where year = ? and make = ? and model = ?");
         $stmt->bind_param('iss', $year, $make, $model);
         $stmt->execute();
         $stmt->close();
+
+
+        // ^ delet every recall for this year make model because we're replacing all the data.
+
+
 
         $camp = '';
         $comp = '';
@@ -102,6 +92,40 @@ function refreshRecalls(mysqli $db, int $year, string $make, string $model): arr
         }
         $stmt->close();
         $db->commit(); // close transaction
+
+        // ^ add all the new recalls to the table and commit the transaction
+
+
+
+        if ($newRecalls)
+        {
+            $stmt2 = $db->prepare("select distinct users.email from cars join users on cars.username = users.username where cars.year = ? and cars.make = ? and cars.model = ? and users.opt_in = 1");
+            $stmt2->bind_param('iss', $year, $make, $model);
+            $stmt2->execute();
+            $recip = array_column($stmt2->get_result()->fetch_all(MYSQLI_ASSOC), 'email');
+            $stmt2->close();
+
+            foreach ($newRecalls as $recall)
+            {
+                send_req_oneway(
+                [
+                    'type' => 'recallEmail',
+                    'recipients' => $recip,  // this is an array ['...', '...', 'etc']
+                    'campaign' => $camp,
+                    'component' => $comp,
+                    'summary' => $summ,
+                    'year' => $year,
+                    'make' => $make,
+                    'model' => $model,
+                    'date' => $date
+                ]);
+            }
+        }
+
+
+        // ^ send recall emails to dmz if there are any new recalls.
+
+
         return [
             'status' => 'refreshed',
             'message' => 'recall cache refreshed.'
