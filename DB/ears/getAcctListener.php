@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
 require_once __DIR__ . '/../lib/database.php';
 require_once __DIR__ . '/../lib/validate.php';
 
-function accountGet($request): {
+function accountGet($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
 
@@ -26,8 +26,7 @@ function accountGet($request): {
         $stmt = $db->prepare("select username, email, opt_in as recall_emails from users where username = ? limit 1");
         $stmt->bind_param('s', $user);
         $stmt->execute();
-        $result = $stmt->get_result();
-        $acct = $result->fetch_all(MYSQLI_ASSOC);
+        $acct = $stmt->get_result()->fetch_assoc();
         $stmt->close();
         $db->close();
         return [

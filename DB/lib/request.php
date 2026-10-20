@@ -58,3 +58,41 @@ function send_request(array $payload){
 	}
 
 }
+
+function send_req_oneway($message) {
+		$type = $payload['type'] ?? '';
+		if (!isset(MQ_ROUTES[$type])) {
+			return mq_error('Unknown request type.');
+		}
+		[$iniFile, $section] = MQ_ROUTES[$type];
+
+		if (!extension_loaded('amqp')) {
+			return mq_error('Server setup problem: php amqp not installed, please install');
+		}
+		$oldDir = getcwd();
+		chdir(MQ_DIR);
+		try {
+			$ini = parse_ini_file($iniFile, true); //referencing the ini file
+			$host = $ini[$section]['BROKER_HOST'] ?? null;
+			$port = (int)($ini[$section]['BROKER_PORT'] ?? 5672); //broker IP's default port just an FYI
+			if ($host === null) {
+				return mq_error("Section [$section] is missing from " . $iniFile); //talks abt a host or a section that could be missing from ini
+			}
+			$sock = @fsockopen($host, $port, $errno, $errstr, 3); //refering to trying tcp connection
+			if (!$sock) {
+				return mq_error('Cant reach the message broker right now'); //errpr message for if broker is unreachable
+			}
+			fclose($sock); //clsoing the tcp connection
+
+			require_once MQ_DIR . '/rabbitMQLib.inc';
+			$client = new rabbitMQClient($iniFile, $section); //the client for this section
+			$client->publish($payload); 	//request gets sent  // Andrew Galella 10.19.2026 - pushing without expecting reply
+
+			return [
+				'status' => 'success',
+				'message' => 'request queued.'
+			];
+		} finally {
+			chdir($oldDir); //going back to the og folder
+		}
+}

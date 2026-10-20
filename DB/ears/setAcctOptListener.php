@@ -12,10 +12,10 @@ require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
 require_once __DIR__ . '/../lib/database.php';
 require_once __DIR__ . '/../lib/validate.php';
 
-function setAcctOpt($request): {
+function setAcctOpt($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
-    $recall_email = $request['recall_emails']
+    $recall_email = $request['recall_emails'];
 
     $validate = doValidate($user, $session_key);
     if ($validate['status'] !== 'success')
