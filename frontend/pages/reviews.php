@@ -204,10 +204,10 @@ if ($action === 'info' && $searched) {
     <div>
       <label for="model">Model</label>
       <select id="model" name="model" onchange="this.form.submit()" <?= $model_disabled ?>>
-        <option value="">-- Pick a Make --</option>
+        <option value="">-- Pick a Model --</option>
         <?php foreach ($models as $m): ?>
-	  <?php if ($m === $pick_make): // keeps selected model after reload ?>
-        <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
+	  <?php if ($m === $pick_model): // keeps selected model after reload ?>
+        <option value="<?= htmlspecialchars($m) ?>" selected><?= htmlspecialchars($m) ?></option>
           <?php else: ?>
         <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
           <?php endif; ?>
@@ -226,21 +226,10 @@ if ($action === 'info' && $searched) {
   <p>Average rating: <?= htmlspecialchars($avg_rating) ?> / 5</p>
   <?php endif; ?>
 
-  <?php foreach ($reviews as $r): // escape chars since reviews are typed
+  <?php foreach ($reviews as $r): // escape chars since reviews are typed ?>
   <p><strong><?= htmlspecialchars($r['username']) ?></strong> - <?= (int)$r['rating'] ?> / 5 - <?= date('m/d/Y', (int)$r['date']) ?></p>
   <p><?= htmlspecialchars($r['text']) ?></p>
   <?php endforeach; ?>
-    <div>
-      <label for="model">Model</label>
-      <select id="model" name="model" <?= $model_disabled ?>>
-        <option value="">-- Pick a Model --</option>
-        <?php foreach ($models as $m): ?>
-      <?php if ($m === $pick_model): // keeps selected model after reload ?>
-        <option value="<?= htmlspecialchars($m) ?>" selected><?= htmlspecialchars ($m) ?></option>
-          <?php else: ?>
-	<option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
-          <?php endif; ?>
-	<?php endforeach; ?>
         <h3>Write a Review</h3>
         <?php // which car the review is for ?>
         <form method="POST" action="reviews.php">
@@ -292,22 +281,6 @@ if ($action === 'info' && $searched) {
 
     <p><a href="reviews.php">Close</a></p>
 </dialog>
-<?php endif; ?>
-
-<?php if ($searched): // only shows when car is picked ?>
-<h3><?= htmlspecialchar($pick_year . ' ' . $pick_make . ' ' . $pick_model) ?></h3>
-    <p><a href="reviews.php?action=info&year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">View Recalls & Complaints</a></p>
-
-<?php if (!$reviews): ?>
-<p>No reviews yet. Be the first to write one.</p>
-<?php else: ?>
-<p>Average rating: <?= htmlspecialchars($avg_rating) ?> / 5</p>
-<?php endif; ?>
-
-<?php foreach ($reviews as $r): // need to escape since reviews are typed ?>
-<p><strong><?= htmlspecialchars($r['username']) ?></strong> - <?= (int)$r['rating'] ?> / 5 - <?= date('m/d/Y', (int)$r['date']) ?></p>
-<p><?= htmlspecialchars($r['text']) ?></p>
-<?php endforeach; ?>
 <?php endif; ?>
 
 <script>
