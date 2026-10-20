@@ -278,8 +278,8 @@ if ($action === 'info' && $searched) {
     <p><strong><?= htmlspecialchars($c['component']) ?></strong> - <?= date('m/d/Y', (int)$c['date']) ?></p>
     <p><?= htmlspecialchars($c['summary']) ?></p>
     <?php endforeach; ?>
-
-    <p><a href="reviews.php">Close</a></p>
+<?php // search goes back to empty, but this keeps it populated ?>
+    <p><a href="reviews.php?year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">Close</a></p>
 </dialog>
 <?php endif; ?>
 
