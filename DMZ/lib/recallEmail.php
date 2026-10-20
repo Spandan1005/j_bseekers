@@ -4,17 +4,17 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-function email_error ($messages) {
+function email_error($message) {
 return ['status' => 'error', 'message' => $message];
 }
 
 //over here is what builds the initial email subject and plain text body
-function email_body($year, $make, $model, $campaign, $component, $summary, $data) {
+function email_body($year, $make, $model, $campaign, $component, $summary, $date) {
 
 $subject = "New recall has been issued for your $year $make $model";
 
-$dataText = 'N/A';
-$if )$date > 0) {
+$dateText = 'N/A';
+if ($date > 0) {
 $dateText = date('m/d/Y', $date);
 }
 
