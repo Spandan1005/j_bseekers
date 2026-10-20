@@ -58,13 +58,14 @@ $model = preg_replace('/[\r\n]+/', ' ', $model);
 
 // gmail login comes from the DMZ server's environment (same way apiNinja gets its key), never from the code
 
+$env =@parse_ini_file(__DIR__ . '/../emails.env') ?: [];
 $user = getenv('MAIL_USER');
 $pass = getenv('MAIL_PASS');
 if (!$user || !$pass) {
 return email_error('Mail login is missing on the DMZ server');
 }
 
-// PHPMailer is installed with composer in DMZ/vendor, so check it is there before using it
+// PHPMailer debuggin purpose only.
 $autoload = __DIR__ . '/../vendor/autoload.php';
 if (!file_exists($autoload)) {
 return email_error('PHPMailer is not installed on the DMZ server');
@@ -90,7 +91,7 @@ $mail->Port = 587;
 // keeps one connection open while we send to everyone
 $mail->SMTPKeepAlive = true;
 
-$mail->setFrom($user, 'j_bseekers');
+$mail->setFrom($user, 'jbseekers'); //check this if theres any issue 
 
 // plain text email, subject and body were built by email_body()
 $mail->isHTML(false);
