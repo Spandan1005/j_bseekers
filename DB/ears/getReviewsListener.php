@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// view reviews listener.  listens on <fix this later>
+// view reviews listener.  listens on reviewGet
 // Andrew Galella, 10.19.2026
 
 // Andrew Galella updated 10.15.2026 so it should actually work
@@ -27,7 +27,7 @@ function getReviews(): array {
     }
     try {
         $db = getDB();
-        $stmt = $db->prepare("select rating, review, creation as date from reviews where year = ? and make = ? and model = ?");
+        $stmt = $db->prepare("select review_id, rating, review, creation as date from reviews where year = ? and make = ? and model = ?");
         $stmt->bind_param('iss', $year, $make, $model);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -57,13 +57,11 @@ function getReviews(): array {
 }
 
 
-
-
 // open and close listener
 
-$server = new rabbitMQServer("garage.ini","garageCar");
-echo "Garage 'View Car' Listener | UP | Listening to 'garageCar'..." .PHP_EOL;
-$server->process_requests('viewCar');
-echo "Garage 'View Car' Listener | DN | Exiting...".PHP_EOL;
+$server = new rabbitMQServer("review.ini","reviewGet");
+echo "Get review Listener | UP | Listening to 'reviewGet'..." .PHP_EOL;
+$server->process_requests('getReviews');
+echo "Get review Listener | DN | Exiting...".PHP_EOL;
 exit();
 ?>

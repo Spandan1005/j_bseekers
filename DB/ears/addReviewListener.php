@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// add reviews listener.  listens on <fix this later>
+// add reviews listener.  listens on reviewWrite
 // Andrew Galella, 10.19.2026
 
 // Andrew Galella updated 10.15.2026 so it should actually work
@@ -38,7 +38,7 @@ function addReview(): array {
 
         return [
             'status' => 'success',
-            'reviews' => 'Successful addition of review';
+            'message' => 'Successful addition of review';
         ];
     }
     catch (Throwable $e) {
@@ -56,9 +56,9 @@ function addReview(): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("garage.ini","garageCar");
-echo "Garage 'View Car' Listener | UP | Listening to 'garageCar'..." .PHP_EOL;
-$server->process_requests('viewCar');
-echo "Garage 'View Car' Listener | DN | Exiting...".PHP_EOL;
+$server = new rabbitMQServer("review.ini","reviewWrite");
+echo "Add Review Listener | UP | Listening to 'reviewWrite'..." .PHP_EOL;
+$server->process_requests('addReview');
+echo "Add Review Listener | DN | Exiting...".PHP_EOL;
 exit();
 ?>
