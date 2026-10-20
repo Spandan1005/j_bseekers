@@ -4,7 +4,7 @@
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
 require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
-require_once __DIR__ . '/../lib/recallEmail.php';
+require_once __DIR__ . '/../lib/recallEmails.php';
 
 function doRecallEmails($request): array {
 	try{
