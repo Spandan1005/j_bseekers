@@ -8,6 +8,6 @@ create table reviews (
     review text,
     creation bigint unsigned not null default (unix_timestamp()),
     constraint fk_user_reviews
-    foreign key (username) references users(username)
+    foreign key (username) references users(username),
     index idx_reviews_user (username)
 );

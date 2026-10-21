@@ -20,7 +20,7 @@ function doModels($request): array {
 }
 
 chdir(__DIR__ . '/../../RabbitMQ');
-$server = new rabbitMQServer("dmz.ini", "dmzModels");
+$server = new rabbitMQServer("vehicle.ini", "vehicleModels");
 echo "NHTSA Model Listener | UP | Listening to 'Models'..." . PHP_EOL;
 $server->process_requests('doModels');
 echo "NHTSA Listener | DN | Exiting..." . PHP_EOL;

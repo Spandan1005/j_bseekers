@@ -38,7 +38,7 @@ function addReview(): array {
 
         return [
             'status' => 'success',
-            'message' => 'Successful addition of review';
+            'message' => 'Successful addition of review'
         ];
     }
     catch (Throwable $e) {
