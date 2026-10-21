@@ -47,25 +47,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 	$pick_year = (int)$_POST['year']; // keeps picked so review shows after posting
 	$pick_make = trim($_POST['make']);
 	$pick_model = trim($_POST['model']);
-	$rating = (int)$_POST['rating'];
-	$text = trim($_POST['text']);
+	
+	$post_action = ''; // which form: write or review
+	if (isset($_POST['action'])) {
+		$post_action = $_POST['action'];
+	}
 
-        if ($rating < 1 || $rating > 5) { // server-side checks for empty dropdowns
-		$msg = 'Rating must be 1-5.';
-	} elseif ($text == '') {
-		$msg = 'Write something for your review.';
-	} else {
-		$reply = send_request([ // review tied to year/make/model
-			'type' => 'write_review',
+	if ($post_action === 'remove') { // remove button for own review
+		$review_id = 0;
+		if (isset($_POST['review_id'])) {
+			$review_id = (int)$_POST['review_id'];
+		}
+		$reply = send_request([ // DB check to validate review with username
+			'type'=> 'remove_review',
 			'session_key' => $_SESSION['session_key'],
 			'username' => $_SESSION['username'],
-			'year' => $pick_year,
-			'make' => $pick_make,
-			'model' => $pick_model,
-			'rating' => $rating,
-			'text' => $text,
+			'review_id' => $review_id,
 		]);
 		$msg = $reply['message'];
+	}
+
+	if ($post_action === 'write') { // write review form
+	       	if ($rating < 1 || $rating > 5) { // server-side checks for empty dropdowns
+			$msg = 'Rating must be 1-5.';
+		} elseif ($text == '') {
+			$msg = 'Write something for your review.';
+		} else {
+			$reply = send_request([ // review tied to year/make/model
+				'type' => 'write_review',
+				'session_key' => $_SESSION['session_key'],
+				'username' => $_SESSION['username'],
+				'year' => $pick_year,
+				'make' => $pick_make,
+				'model' => $pick_model,
+				'rating' => $rating,
+				'review`' => $text,
+			]);
+			$msg = $reply['message'];
+		}
 	}
 }
    
@@ -228,11 +247,22 @@ if ($action === 'info' && $searched) {
 
   <?php foreach ($reviews as $r): // escape chars since reviews are typed ?>
   <p><strong><?= htmlspecialchars($r['username']) ?></strong> - <?= (int)$r['rating'] ?> / 5 - <?= date('m/d/Y', (int)$r['date']) ?></p>
-  <p><?= htmlspecialchars($r['text']) ?></p>
+  <p><?= htmlspecialchars($r['review']) ?></p>
+  <?php if ($r['username'] === $_SESSION['username']): // only user's own reviews can be removed ?>
+  <form method="POST" action="reviews.php">
+      <input type="hidden" name="action" value="remove" />
+      <input type="hidden" name="review_id" value="<?= (int)$r['review_id'] ?>" />
+      <input type="hidden" name="year" value="<?= (int)$pick_year ?>" />
+      <input type="hidden" name="make" value="<?= htmlspecialchars($pick_make) ?>" />
+      <input type="hidden" name="model" value="<?= htmlspecialchars($pick_model) ?>" />
+      <button type="submit" onclick="return confirm('Remove your review?')">Remove</button>
+  </form>
+  <?php endif; ?>
   <?php endforeach; ?>
         <h3>Write a Review</h3>
         <?php // which car the review is for ?>
-        <form method="POST" action="reviews.php">
+	<form method="POST" action="reviews.php">
+            <input type="hidden" name="action" value="write" />
             <input type="hidden" name="year" value="<?= (int)$pick_year ?>" />
             <input type="hidden" name="make" value="<?= htmlspecialchars($pick_make) ?>" />
 	    <input type="hidden" name="model" value="<?= htmlspecialchars($pick_model) ?>" />
