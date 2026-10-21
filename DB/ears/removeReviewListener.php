@@ -13,7 +13,7 @@ require_once __DIR__ . '/../lib/validate.php';
 function removeReview($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
-    $car_id = $request['review_id'];
+    $review_id = $request['review_id'];
 
     $validate = doValidate($user, $session_key);
     if ($validate['status'] !== 'success')

@@ -13,7 +13,7 @@ require_once __DIR__ . '/../lib/database.php';
 require_once __DIR__ . '/../lib/validate.php';
 
 
-function addReview(): array {
+function addReview($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
     $year = $request['year'];
@@ -34,7 +34,7 @@ function addReview(): array {
         $stmt->execute();
         //$fetched = $stmt->fetch();
         $stmt->close();
-
+        $db->close();
 
         return [
             'status' => 'success',
