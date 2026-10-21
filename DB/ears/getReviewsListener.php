@@ -27,7 +27,7 @@ function getReviews(): array {
     }
     try {
         $db = getDB();
-        $stmt = $db->prepare("select review_id, rating, review, creation as date from reviews where year = ? and make = ? and model = ?");
+        $stmt = $db->prepare("select review_id, username, rating, avg(rating) as avg_rating, review, creation as date from reviews where year = ? and make = ? and model = ?");
         $stmt->bind_param('iss', $year, $make, $model);
         $stmt->execute();
         $result = $stmt->get_result();
