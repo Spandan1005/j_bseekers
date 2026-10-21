@@ -11,6 +11,7 @@ require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
 require_once __DIR__ . '/../lib/database.php';
 require_once __DIR__ . '/../lib/validate.php';
+require_once __DIR__ . '/../lib/getCachedData.php';
 
 
 function viewCar($request): array {
@@ -59,44 +60,18 @@ function viewCar($request): array {
         // we're just going to rely on the cron.
 
 
-        // grab recalls
+        // // grab recalls and complaints from shared function
 
-        $stmt = $db->prepare("select campaign, component, _summary as summary, camp_date as date from recalls where year = ? and make = ? and model = ? order by camp_date desc");
-        $stmt->bind_param('iss', $year, $make, $model);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $recalls = $result->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        foreach ($recalls as &$recall)
-        {
-            $recall['date'] = (int)$recall['date'];
-
-        }
-
-
-        // grab complaints
-
-        $stmt = $db->prepare("select component, _summary as summary, comp_date as date from complaints where year = ? and make = ? and model = ? order by comp_date desc");
-        $stmt->bind_param('iss', $year, $make, $model);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $complaints = $result->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $data = getCachedData($db, $year, $make, $model);
         $db->close();
-        foreach ($complaints as &$complaint)
+        if ($data['status'] !== 'success')
         {
-            $complaint['date'] = (int)$complaint['date'];
-
+            return $data;
         }
+        $data['car'] = $car;
 
 
-        return [
-            'status' => 'success',
-            'car' => $car,
-            'recalls' => $recalls,
-            'complaints' => $complaints
-        ];
+        return $data;
     }
     catch (Throwable $e) {
         // catchall failure
