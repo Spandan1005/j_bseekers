@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 	$pick_make = trim($_POST['make']);
 	$pick_model = trim($_POST['model']);
 	
-	$post_action = ''; // which form: write or review
+	$post_action = ''; // which form: write or remove
 	if (isset($_POST['action'])) {
 		$post_action = $_POST['action'];
 	}
@@ -68,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 	}
 
 	if ($post_action === 'write') { // write review form
+		$rating = (int)$_POST['rating'];
+		$text = trim($_POST['text']);
+
 	       	if ($rating < 1 || $rating > 5) { // server-side checks for empty dropdowns
 			$msg = 'Rating must be 1-5.';
 		} elseif ($text == '') {
@@ -81,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 				'make' => $pick_make,
 				'model' => $pick_model,
 				'rating' => $rating,
-				'review`' => $text,
+				'review' => $text,
 			]);
 			$msg = $reply['message'];
 		}

@@ -285,7 +285,7 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
             <?php endforeach; ?>
 
                 <?php // opens reviews.php ?>
-		<p><a href="reviews.php?year=<?= (int)$popup_car['year'] ?>&make=<?= urlencode($popup_car['make']) ?>&model=<?= urlencode($popup+car['model']) ?>">Reviews for this car</a></p>
+		<p><a href="reviews.php?year=<?= (int)$popup_car['year'] ?>&make=<?= urlencode($popup_car['make']) ?>&model=<?= urlencode($popup_car['model']) ?>">Reviews for this car</a></p>
             <p><a href="myGarage.php">Close</a></p>
        </dialog>
 <?php endif; ?>
