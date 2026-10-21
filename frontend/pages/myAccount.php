@@ -39,14 +39,10 @@ $reply = send_request([
 	'session_key' => $_SESSION['session_key'],
 	'username' => $_SESSION['username'],
 ]);
-if (isset($reply['username'])) {
-	$username = $reply['username'];
-}
-if (isset($reply['email'])) {
-	$email = $reply['email'];
-}
-if (isset($reply['recall_emails'])) {
-	$recall_emails = $reply['recall_emails'];
+if (isset($reply['account'])) { // 10.21 changed because data is sent in array
+	$username = $reply['account']['username'];
+	$email = $reply['account']['email'];
+	$recall_emails = $reply['account']['recall_emails'];
 }
 
 // checks box if recall emails are already on
