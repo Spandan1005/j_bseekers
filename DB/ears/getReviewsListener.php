@@ -13,7 +13,7 @@ require_once __DIR__ . '/../lib/database.php';
 require_once __DIR__ . '/../lib/validate.php';
 
 
-function getReviews(): array {
+function getReviews($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
     $year = $request['year'];
@@ -27,13 +27,20 @@ function getReviews(): array {
     }
     try {
         $db = getDB();
-        $stmt = $db->prepare("select review_id, username, rating, avg(rating) as avg_rating, review, creation as date from reviews where year = ? and make = ? and model = ?");
+        $stmt = $db->prepare("select review_id, username, rating, review, creation as date from reviews where year = ? and make = ? and model = ?");
         $stmt->bind_param('iss', $year, $make, $model);
         $stmt->execute();
         $result = $stmt->get_result();
         $reviews = $result->fetch_all(MYSQLI_ASSOC);
         //$fetched = $stmt->fetch();
         $stmt->close();
+        $stmt = $db->prepare("select avg(rating) as avg_rating from reviews where year = ? and make = ? and model = ?");
+        stmt->bind_param('iss', $year, $make, $model);
+        $stmt->execute();
+        $average = $stmt->get_result()->fetch_assoc()['avg_rating'];
+        $stmt->close();
+        $db->close();
+
         foreach ($reviews as &$review)
         {
             $review['date'] = (int)$review['date'];
@@ -43,6 +50,7 @@ function getReviews(): array {
 
         return [
             'status' => 'success',
+            'avg_rating' => (float)$average,
             'reviews' => $reviews
         ];
     }
