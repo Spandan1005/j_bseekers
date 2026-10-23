@@ -24,12 +24,12 @@ function viewListings($request): array {
     }
     try {
         $db = getDB();
-        $stmt = $db->prepare("select car_id, username, email,
+        $stmt = $db->prepare("select cars.car_id, cars.username, email,
                              year, make, model,
                              price, mileage, color, location, description
-                             from cars left join listings on cars.car_id = listings.car_id join users on cars.username = users.username
+                             from cars join listings on cars.car_id = listings.car_id join users on cars.username = users.username
                              where year = ? and make = ? and model = ?");
-        $stmt->bind_param('iss', $year, $make, $model;
+        $stmt->bind_param('iss', $year, $make, $model);
         $stmt->execute();
         $result = $stmt->get_result();
         $listings = $result->fetch_all(MYSQLI_ASSOC);

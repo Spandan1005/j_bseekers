@@ -13,7 +13,7 @@ require_once __DIR__ . '/../lib/validate.php';
 function removeListing($request): array {
     $user = trim($request['username']);
     $session_key = $request['session_key'];
-    $review_id = (int)$request['car_id'];
+    $car_id = (int)$request['car_id'];
 
     $validate = doValidate($user, $session_key);
     if ($validate['status'] !== 'success')
@@ -28,7 +28,7 @@ function removeListing($request): array {
         $stmt->bind_result($year);
         $fetched = $stmt->fetch();
         $stmt->close();
-        if !($fetched && isset($year)) {
+        if (!($fetched && isset($year))) {
             return [
                 'status' => 'error',
                 'message' => 'Car not found in owner\'s garage.'

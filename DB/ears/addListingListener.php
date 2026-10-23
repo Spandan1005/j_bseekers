@@ -37,7 +37,7 @@ function addListing($request): array {
         $stmt->bind_result($year);
         $fetched = $stmt->fetch();
         $stmt->close();
-        if !($fetched && isset($year)) {
+        if (!($fetched && isset($year))) {
             return [
                 'status' => 'error',
                 'message' => 'Car not found in owner\'s garage.'

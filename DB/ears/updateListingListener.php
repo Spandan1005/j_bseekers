@@ -37,24 +37,31 @@ function updateListing($request): array {
         $stmt->bind_result($year);
         $fetched = $stmt->fetch();
         $stmt->close();
-        if !($fetched && isset($year)) {
+        if (!($fetched && isset($year))) {
             return [
                 'status' => 'error',
                 'message' => 'Car not found in owner\'s garage.'
             ];
         }
 
-        $stmt = $db->prepare("update listings set price = ?, mileage = ?, color = ?, location = ?, description = ? where car_id = ?");
+        $stmt = $db->prepare("update listings set price = ?, mileage = ?, color = ?, location = ?, description = ?, updated = unix_timestamp() where car_id = ?");
         $stmt->bind_param('disssi', $price, $mileage, $color, $location, $desc, $car_id);
         $stmt->execute();
+        $affected = $stmt->affected_rows;
         //$fetched = $stmt->fetch();
         $stmt->close();
         $db->close();
-
+        if ($affected) {
+            return [
+                'status' => 'success',
+                'message' => 'Listing updated'
+            ];
+        }
         return [
-            'status' => 'success',
-            'message' => 'Listing updated'
+            'status' => 'error',
+            'message' => 'Listing not found.'
         ];
+
     }
     catch (Throwable $e) {
         // catchall failure
