@@ -8,5 +8,7 @@ create table cars (
     constraint fk_user_cars
     foreign key (username) references users(username)
     on delete cascade on update cascade,
-    index idx_cars_user (username)
+    index idx_cars_user (username),
+    index idx_cars_ymm (year, make, model)
 );
+

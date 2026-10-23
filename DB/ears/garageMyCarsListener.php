@@ -21,7 +21,7 @@ function listMyCars($request): array {
     }
     try {
         $db = getDB();
-        $stmt = $db->prepare("select car_id, year, make, model from cars where username = ?");
+        $stmt = $db->prepare("select car_id, year, make, model, price, mileage, color, location, description from cars left join listings on cars.car_id = listings.car_id where username = ?");
         $stmt->bind_param('s', $user);
         $stmt->execute();
         $result = $stmt->get_result();

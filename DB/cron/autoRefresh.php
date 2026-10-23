@@ -11,7 +11,7 @@ const CACHE_LOG = __DIR__ . '/../logs/autoRefresh.log';
 const ZEES = 2;
 
 function cacheLog(string $message): void {
-    file_put_contents(CACHE_LOG, date('c') . ' ' . $message .PHP_EOL, FILE_APPEND | LOCK_EX);
+    file_put_contents(CACHE_LOG, date('DATE_RSS') . ' ' . $message .PHP_EOL, FILE_APPEND | LOCK_EX);
 }
 
 cacheLog('############ Cache Refresh | START #################');
