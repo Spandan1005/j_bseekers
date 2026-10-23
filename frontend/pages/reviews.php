@@ -270,7 +270,7 @@ if ($action === 'listings' && $searched) {
   <?php if ($searched): // only shows when car is picked ?>
   <h3><?= htmlspecialchars($pick_year . ' ' . $pick_make . ' ' . $pick_model) ?></h3>
   <p><a href="reviews.php?action=info&year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">View Recalls & Complaints</a></p>
-  <p><a href="reviews.php?action=listing&year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">View Listings For Sale</a></p>
+  <p><a href="reviews.php?action=listings&year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">View Listings For Sale</a></p>
 
   <?php if (!$reviews): ?>
   <p>No reviews yet. Be the first to write one.</p>
@@ -360,7 +360,7 @@ if ($action === 'listings' && $searched) {
     <p><?= htmlspecialchars($l['description']) ?></p>
     <?php endif; ?>
     <?php // buy emails seller directly ?>
-    <p>Contact at:<a href="mailto:<?= htmlspecialchars($l['email']) ?>"><?= htmlspecialchars($l['email']) ?></a></p>
+    <p>Contact at: <a href="mailto:<?= htmlspecialchars($l['email']) ?>"><?= htmlspecialchars($l['email']) ?></a></p>
     <?php if ($l['username'] !== $_SESSION['username']): // so sellers cant buy their own car ?>
     <?php // buyer can choose to add car to garage after purchase, keeps same car searched ?>
     <form method="POST" action="reviews.php">
@@ -372,7 +372,7 @@ if ($action === 'listings' && $searched) {
     </form>
     <?php endif; ?>
     <?php endforeach; ?>
-    <p><a href="reviews.php?year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<? urlencode($pick_model) ?>">Close</a></p>
+    <p><a href="reviews.php?year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">Close</a></p>
 </dialog>
 <?php endif; ?>
 
