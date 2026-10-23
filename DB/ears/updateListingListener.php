@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// update listings listener.  listens on <replace>
+// update listings listener.  listens on updateListing
 // Andrew Galella, 10.22.2026
 
 // Andrew Galella updated 10.15.2026 so it should actually work
@@ -76,8 +76,8 @@ function updateListing($request): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("listings.ini","<replace>");
-echo "Update Listing Listener | UP | Listening to '<replace>'..." .PHP_EOL;
+$server = new rabbitMQServer("listing.ini","updateListing");
+echo "Update Listing Listener | UP | Listening to 'updateListing'..." .PHP_EOL;
 $server->process_requests('updateListing');
 echo "Update Listing Listener | DN | Exiting...".PHP_EOL;
 exit();

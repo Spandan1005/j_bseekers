@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// view listing listener.  listens on <replace>
+// view listing listener.  listens on readListing
 // Andrew Galella, 10.22.2026
 
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
@@ -52,8 +52,8 @@ function viewListings($request): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("listings.ini","<replace>");
-echo "Listing Listener | UP | Listening to '<replace>'..." .PHP_EOL;
+$server = new rabbitMQServer("listing.ini","readListing");
+echo "Listing Listener | UP | Listening to 'readListing'..." .PHP_EOL;
 $server->process_requests('viewListings');
 echo "Listing Listener | DN | Exiting...".PHP_EOL;
 exit();

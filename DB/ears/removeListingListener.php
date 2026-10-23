@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// Remove listing listener.  listens on <replace>
+// Remove listing listener.  listens on deleteListing
 // Andrew Galella, 10.22.2026
 
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
@@ -64,8 +64,8 @@ function removeListing($request): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("listings.ini","<replace>");
-echo "Delete listing Listener | UP | Listening to '<replace>'..." .PHP_EOL;
+$server = new rabbitMQServer("listing.ini","deleteListing");
+echo "Delete listing Listener | UP | Listening to 'deleteListing'..." .PHP_EOL;
 $server->process_requests('removeListing');
 echo "Delete listing Listener | DN | Exiting...".PHP_EOL;
 exit();

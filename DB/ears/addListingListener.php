@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// add listings listener.  listens on <replace>
+// add listings listener.  listens on createListing
 // Andrew Galella, 10.22.2026
 
 // Andrew Galella updated 10.15.2026 so it should actually work
@@ -69,8 +69,8 @@ function addListing($request): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("listings.ini","<replace>");
-echo "Add Listing Listener | UP | Listening to '<replace>'..." .PHP_EOL;
+$server = new rabbitMQServer("listing.ini","createListing");
+echo "Add Listing Listener | UP | Listening to 'createListing'..." .PHP_EOL;
 $server->process_requests('addListing');
 echo "Add Listing Listener | DN | Exiting...".PHP_EOL;
 exit();
