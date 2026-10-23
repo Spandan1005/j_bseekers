@@ -63,6 +63,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 			$msg = $reply['message'];
 		}
 	}
+
+	if ($action === 'create_listing') { // sell car popup form
+		$car_id = 0;
+		if (isset($_POST['car_id'])) { // hidden input to see which car
+			$car_id = (int)$_POST['car_id'];
+		}
+		$price = (float)$_POST['price']; // dollars + cents
+		$mileage = (int)$_POST['mileage'];
+		$color = trim($_POST['color']);
+		$location = trim($_POST['location']);
+		$description = trim($_POST['description']); // optional
+
+		if ($price <= 0) { // server check
+			$msg = 'Price must be more than $0.';
+		} elseif ($mileage < 0) {
+			$msg = 'Mileage cannot be negative.';
+		} elseif ($color == '' || $location == '') {
+			$msg = 'Color and location are required.';
+		} else {
+			$reply = send_request([ // DB check if car in garage
+				'type' = 'create_listing',
+				'session_key' => $_SESSION['session_key'],
+				'username' => $_SESSION['username'],
+				'car_id' => $car_id,
+				'price' => $price,
+				'mileage' => $mileage,
+				'color' => $color,
+				'location' => $location,
+				'description' => $description,
+			]);
+		        $msg = $reply['message'];
+		}
+	}
 }
 
 // decides which popup is displayed based on which button is clicked
@@ -89,7 +122,7 @@ $popup_car = null;
 $recalls = [];
 $complaints = [];
 
-if ($action === 'view') {
+if ($action === 'view'|| $action === 'sell') { // sell popup needs car 
 	$car_id = 0;
 	if (isset($_GET['car_id'])) {
 		$car_id = (int)$_GET['car_id'];
@@ -170,6 +203,17 @@ $garage = send_request([
 ]);
 if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored to send back
 	$cars = $garage['cars'];
+}
+
+// for sale listing for car in details popup
+// get_garage sends fields per car / null if car not listed 
+$listing = null;
+if ($popup_car) {
+	foreach ($cars as $c) {
+		if ($c['car_id'] === $popup_car['car_id'] && $c['price'] !== null) {
+			$listing = $c;
+		}
+	}
 }
 ?>
 
@@ -284,10 +328,56 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
 	    <p><?= htmlspecialchars($c['summary']) ?></p>
             <?php endforeach; ?>
 
+            <h3>For Sale</h3>
+            <?php if (!$listing): ?>
+	    <p>Not listed for sale</p>
+            <p><a href="myGarage.php?action=sell&car_id=<?= (int)$popup_car['car_id'] ?>">Sell car</a></p>
+	    <?php else: // prevent XSS since its typed ?>
+	    <p>Price: $<?= number_format((float)$listing['price'], 2) ?></p>
+            <p>Mileage: <?= number_format((int)$listing['mileage']) ?> miles</p>
+            <p>Color: <?= htmlspecialchars($listing['color']) ?></p>
+            <p>Location: <?= htmlspecialchars($listing['location']) ?></p>
+            <?php if ($listing['description']): // description optional ?>
+            <p><?= htmlspecialchars($listing['description']) ?></p>
+            <?php endif; ?>
+            <?php endif; ?>
+
                 <?php // opens reviews.php ?>
 		<p><a href="reviews.php?year=<?= (int)$popup_car['year'] ?>&make=<?= urlencode($popup_car['make']) ?>&model=<?= urlencode($popup_car['model']) ?>">Reviews for this car</a></p>
             <p><a href="myGarage.php">Close</a></p>
        </dialog>
+<?php endif; ?>
+
+<?php if ($action === 'sell' && $popup_car): // sell popup ?>
+<dialog id="popup">
+    <h3>Sell <?= htmlspecialchars($popup_car['year'] . ' ' . $popup_car['make'] . ' ' . $popup_car['model']) ?></h3>
+    <form method="POST" action="myGarage.php">
+    <input type="hidden" name="action" value="create_listing" />
+    <div>
+      <label for="price">Price ($)</label>
+      <input type="number" id="price" name="price" min="0.01" required />
+    </div>
+    <div>
+      <label for="mileage">Mileage</label>
+      <input type="number" id="mileage" name="mileage" min="0" required />
+    </div>
+    <div>
+      <label for="color">Color</label>
+      <input type="text" id="color" name="color" maxlength="20" required />
+    </div>
+    <div>
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" maxlength="50" required />
+    </div>
+    <div>
+      <label for="description">Description (optional)</label>
+      <textarea id="description" name="description" maxlength="1000"></textarea>
+    </div>
+    <button type="submit">List for Sale</button>
+    <?php // cancel goes back to car details not close completely ?>
+    <a href="myGarage.php?action=view&car_id=<?= (int)$popup_car['car_id'] ?>">Cancel</a>
+    </form>
+</dialog>
 <?php endif; ?>
 
 <script>
