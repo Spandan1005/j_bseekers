@@ -37,7 +37,8 @@ function getReviews($request): array {
         $stmt = $db->prepare("select avg(rating) as avg_rating from reviews where year = ? and make = ? and model = ?");
         $stmt->bind_param('iss', $year, $make, $model);
         $stmt->execute();
-        $average = $stmt->get_result()->fetch_assoc()['avg_rating'];
+        $stmt->bind_result($average);
+        $fetched = $stmt->fetch();
         $stmt->close();
         $db->close();
 
