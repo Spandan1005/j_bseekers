@@ -257,7 +257,7 @@ if (isset($garage['cars'])) { // stays empty if DB doesn't have any cars stored 
 $listing = null;
 if ($popup_car) {
 	foreach ($cars as $c) {
-		if ($c['car_id'] === $popup_car['car_id'] && $c['price'] !== null) {
+		if ($c['car_id'] == $popup_car['car_id'] && $c['price'] !== null) {
 			$listing = $c;
 		}
 	}
@@ -387,7 +387,7 @@ if ($popup_car) {
             <?php if ($listing['description']): // description optional ?>
             <p><?= htmlspecialchars($listing['description']) ?></p>
 	    <?php endif; ?>
-	    <p><a href="myGarage.php?action=edit_listing&car_id=<? (int)$popup_car['car_id'] ?>">Edit listing</a></p>
+	    <p><a href="myGarage.php?action=edit_listing&car_id=<?= (int)$popup_car['car_id'] ?>">Edit listing</a></p>
             <?php // same confirm as remove car ?>
             <form method="POST" action="myGarage.php">
             <input type="hidden" name="action" value="delete_listing" />
@@ -411,7 +411,7 @@ if ($popup_car) {
     <input type="hidden" name="car_id" value="<?= (int)$popup_car['car_id'] ?>" />
     <div>
       <label for="price">Price ($)</label>
-      <input type="number" id="price" name="price" min="0.01" required />
+      <input type="number" id="price" name="price" min="0.01" step="0.01" required />
     </div>
     <div>
       <label for="mileage">Mileage</label>
