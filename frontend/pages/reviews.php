@@ -177,6 +177,23 @@ if ($action === 'info' && $searched) {
 		$complaints = $reply['complaints'];
 	}
 }
+
+// listing popup (link) / all users listings for that car
+// same idea as recalls + complaints
+$listings = [];
+if ($action === 'listings' && $searched) {
+	$reply = send_request([
+		'type' => 'read_listing',
+		'session_key' => $_SESSION['session_key'],
+		'username' => $_SESSION['username'],
+		'year' => $pick_year,
+		'make' => $pick_make,
+		'model' => $pick_model,
+	]);
+	if (isset($reply['listings'])) {
+		$listings = $reply['listings'];
+	}
+}
 ?>
 
 <!DOCTYPE html>
@@ -241,6 +258,7 @@ if ($action === 'info' && $searched) {
   <?php if ($searched): // only shows when car is picked ?>
   <h3><?= htmlspecialchars($pick_year . ' ' . $pick_make . ' ' . $pick_model) ?></h3>
   <p><a href="reviews.php?action=info&year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">View Recalls & Complaints</a></p>
+  <p><a href="reviews.php?action=listing&year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">View Listings For Sale</a></p>
 
   <?php if (!$reviews): ?>
   <p>No reviews yet. Be the first to write one.</p>
@@ -313,6 +331,26 @@ if ($action === 'info' && $searched) {
     <?php endforeach; ?>
 <?php // search goes back to empty, but this keeps it populated ?>
     <p><a href="reviews.php?year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<?= urlencode($pick_model) ?>">Close</a></p>
+</dialog>
+<?php endif; ?>
+
+<?php if ($action === 'listings' && $searched): // reused from recalls + complaints popup ?>
+<dialog id="popup">
+    <h3>For Sale: <?= htmlspecialchars($pick_year . ' ' . $pick_make . ' ' . $pick_model) ?></h3>
+    <?php if (!$listings): ?>
+    <p>No listings for this yet</p>
+    <?php endif; ?>
+    <?php foreach ($listings as $l): // escape since listings are typed ?>
+    <p><strong><?= htmlspecialchars($l['year'] . ' ' . $l['make'] . ' ' . $l['model']) ?></strong> (owner: <?= htmlspecialchars($l['email']) ?>)</p>
+    <p>Price: $<?= number_format((float)$l['price'], 2) ?> | Mileage: <?= number_format((int)$l['mileage']) ?> miles | Color: <?= htmlspecialchars($l['color']) ?></p>
+    <p>Location: <?= htmlspecialchars($l['location']) ?></p>
+    <?php if ($l['description']): // optional ?>
+    <p><?= htmlspecialchars($l['description']) ?></p>
+    <?php endif; ?>
+    <?php // buy emails seller directly ?>
+    <p>Contact at:<a href="mailto:<?= htmlspecialchars($l['email']) ?>"><?= htmlspecialchars($l['email']) ?></a></p>
+    <?php endforeach; ?>
+    <p><a href="reviews.php?year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<? urlencode($pick_model) ?>">Close</a></p>
 </dialog>
 <?php endif; ?>
 
