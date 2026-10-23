@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 			$msg = 'Color and location are required.';
 		} else {
 			$reply = send_request([ // DB check if car in garage
-				'type' = 'create_listing',
+				'type' => 'create_listing',
 				'session_key' => $_SESSION['session_key'],
 				'username' => $_SESSION['username'],
 				'car_id' => $car_id,
@@ -353,6 +353,8 @@ if ($popup_car) {
     <h3>Sell <?= htmlspecialchars($popup_car['year'] . ' ' . $popup_car['make'] . ' ' . $popup_car['model']) ?></h3>
     <form method="POST" action="myGarage.php">
     <input type="hidden" name="action" value="create_listing" />
+    <?php // tell DB which car will be listed ?>
+    <input type="hidden" name="car_id" value="<?= (int)$popup_car['car_id'] ?>" />
     <div>
       <label for="price">Price ($)</label>
       <input type="number" id="price" name="price" min="0.01" required />
