@@ -96,6 +96,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 		        $msg = $reply['message'];
 		}
 	}
+
+	if ($action === 'update_listing') { // edit listing form / same checks as sell
+		$car_id = 0;
+		if (isset($_POST['car_id'])) { 
+			$car_id = (int)$_POST['car_id'];
+		}
+		$price = (float)$_POST['price'];
+		$mileage = (int)$_POST['mileage'];
+		$color = trim($_POST['color']);
+		$location = trim($_POST['location']);
+		$description = trim($_POST['description']);
+
+		if ($price <= 0) {
+			$msg = 'Price must be more than $0.';
+		} elseif ($mileage < 0) {
+			$msg = 'Mileage cannot be negative.';
+		} elseif ($color == '' || $location == '') {
+			$msg = 'Color and location are required.';
+		} else {
+			$reply = send_request([
+				'type' => 'update_listing',
+				'session_key' => $_SESSION['session_key'],
+				'username' => $_SESSION['username'],
+				'car_id' => $car_id,
+				'price' => $price, 
+				'mileage' => $mileage,
+				'color' => $color,
+				'location' => $location,
+				'description' => $description,
+			]);
+			$msg = $reply['message'];
+		}
+	}
 }
 
 // decides which popup is displayed based on which button is clicked
@@ -122,7 +155,7 @@ $popup_car = null;
 $recalls = [];
 $complaints = [];
 
-if ($action === 'view'|| $action === 'sell') { // sell popup needs car 
+if ($action === 'view'|| $action === 'sell' || $action === 'edit_listing') { // sell + edit popup needs car 
 	$car_id = 0;
 	if (isset($_GET['car_id'])) {
 		$car_id = (int)$_GET['car_id'];
@@ -339,7 +372,8 @@ if ($popup_car) {
             <p>Location: <?= htmlspecialchars($listing['location']) ?></p>
             <?php if ($listing['description']): // description optional ?>
             <p><?= htmlspecialchars($listing['description']) ?></p>
-            <?php endif; ?>
+	    <?php endif; ?>
+            <p><a href="myGarage.php?action=edit_listing&car_id=<? (int)$popup_car['car_id'] ?>">Edit listing</a></p>
             <?php endif; ?>
 
                 <?php // opens reviews.php ?>
@@ -381,6 +415,38 @@ if ($popup_car) {
     </form>
 </dialog>
 <?php endif; ?>
+
+<?php if ($action === 'edit_listing' && $popup_car && $listing): // same form as sell ?>
+<dialog id="popup">
+    <h3>Edit Listing: <?= htmlspecialchars($popup_car['year'] . ' ' . $popup_car['make'] . ' ' . $popup_car['model']) ?></h3>
+    <form method="POST" action="myGarage.php">
+    <input type="hidden" name="action" value="update_listing" />
+    <input type="hidden" name="car_id" value="<?= (int)$popup_car['car_id'] ?>" />
+    <div>
+      <label for="price">Price ($)</label>
+      <input type="number" id="price" name="price" min="0.01" step="0.01" value="<?= htmlspecialchars($listing['price']) ?>" required />
+    </div>
+    <div>
+      <label for="mileage">Mileage</label>
+      <input type="number" id="mileage" name="mileage" min="0" value="<?= (int)$listing['mileage'] ?>" required />
+    </div>
+    <div>
+      <label for="color">Color</label>
+      <input type="text" id="color" name="color" maxlength="20" value="<?= htmlspecialchars($listing['color']) ?>" required />
+    </div>
+    <div>
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" maxlength="50" value="<?= htmlspecialchars($listing['location']) ?>" required />
+    </div>
+    <div>
+      <label for="description">Description (optional)</label>
+      <textarea id="description" name="description" maxlength="1000" value="<?= htmlspecialchars((string)$listing['description']) ?>"></textarea>
+    </div>
+    <button type="submit">Save Listing</button>
+    <a href="myGarage.php?action=view&car_id=<?= (int)$popup_car['car_id'] ?>">Cancel</a>
+    </form>
+</dialog>
+<?php endif;?>
 
 <script>
 let popup = document.getElementById('popup'); // only display when popup was asked for
