@@ -66,6 +66,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 		]);
 		$msg = $reply['message'];
 	}
+        
+	if ($post_action === 'add_to_garage') { // buyer can add bought car to garage 
+		$reply = send_request([ // same as add car popup
+			'type' => 'add_car',
+			'session_key' => $_SESSION['session_key'],
+			'username' => $_SESSION['username'],
+			'year' => $pick_year,
+			'make' => $pick_make,
+			'model' => $pick_model,
+		]);
+		$msg = $reply['message'];
+	}
 
 	if ($post_action === 'write') { // write review form
 		$rating = (int)$_POST['rating'];
@@ -349,6 +361,14 @@ if ($action === 'listings' && $searched) {
     <?php endif; ?>
     <?php // buy emails seller directly ?>
     <p>Contact at:<a href="mailto:<?= htmlspecialchars($l['email']) ?>"><?= htmlspecialchars($l['email']) ?></a></p>
+    <?php // buyer can choose to add car to garage after purchase, keeps same car searched ?>
+    <form method="POST" action="reviews.php">
+        <input type="hidden" name="action" value="add_to_garage" />
+        <input type="hidden" name="year" value="<?= (int)$pick_year ?>" />
+        <input type="hidden" name="make" value="<?= htmlspecialchars($pick_make) ?>" />
+        <input type="hidden" name="model" value="<?= htmlspecialchars($pick_model) ?>" />
+        <button type="submit" onclick="return confirm('Add this car to your garage?')">Add to my garage</button>
+    </form>
     <?php endforeach; ?>
     <p><a href="reviews.php?year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<? urlencode($pick_model) ?>">Close</a></p>
 </dialog>
