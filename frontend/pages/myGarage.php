@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form is submitt
 
 	if ($action === 'delete_listing') { // remove listing button
 		$car_id = 0;
-		if (isset($_POST['car_id']; {
+		if (isset($_POST['car_id'])) {
 			$car_id = (int)$_POST['car_id'];
 		}
 		$reply = send_request([ // DB checks if listing belongs to user
@@ -392,7 +392,8 @@ if ($popup_car) {
             <form method="POST" action="myGarage.php">
             <input type="hidden" name="action" value="delete_listing" />
             <input type="hidden" name="car_id" value="<?= (int)$popup_car['car_id'] ?>" />
-            <button type="submit" onclick="return confirm('Are you sure you want to remove this listing?')">Remove listing</button>
+	    <button type="submit" onclick="return confirm('Are you sure you want to remove this listing?')">Remove listing</button>
+            </form>
             <?php endif; ?>
 
                 <?php // opens reviews.php ?>
@@ -459,7 +460,7 @@ if ($popup_car) {
     </div>
     <div>
       <label for="description">Description (optional)</label>
-      <?php // 10.23 textareas dont use value
+      <?php // 10.23 textareas dont use value ?>
       <textarea id="description" name="description" maxlength="1000"><?= htmlspecialchars((string)$listing['description']) ?></textarea>
     </div>
     <button type="submit">Save Listing</button>
