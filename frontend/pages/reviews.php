@@ -361,6 +361,7 @@ if ($action === 'listings' && $searched) {
     <?php endif; ?>
     <?php // buy emails seller directly ?>
     <p>Contact at:<a href="mailto:<?= htmlspecialchars($l['email']) ?>"><?= htmlspecialchars($l['email']) ?></a></p>
+    <?php if ($l['username'] !== $_SESSION['username']): // so sellers cant buy their own car ?>
     <?php // buyer can choose to add car to garage after purchase, keeps same car searched ?>
     <form method="POST" action="reviews.php">
         <input type="hidden" name="action" value="add_to_garage" />
@@ -369,6 +370,7 @@ if ($action === 'listings' && $searched) {
         <input type="hidden" name="model" value="<?= htmlspecialchars($pick_model) ?>" />
         <button type="submit" onclick="return confirm('Add this car to your garage?')">Add to my garage</button>
     </form>
+    <?php endif; ?>
     <?php endforeach; ?>
     <p><a href="reviews.php?year=<?= (int)$pick_year ?>&make=<?= urlencode($pick_make) ?>&model=<? urlencode($pick_model) ?>">Close</a></p>
 </dialog>
