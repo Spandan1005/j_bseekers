@@ -440,7 +440,8 @@ if ($popup_car) {
     </div>
     <div>
       <label for="description">Description (optional)</label>
-      <textarea id="description" name="description" maxlength="1000" value="<?= htmlspecialchars((string)$listing['description']) ?>"></textarea>
+      <?php // 10.23 textareas dont use value
+      <textarea id="description" name="description" maxlength="1000"><?= htmlspecialchars((string)$listing['description']) ?></textarea>
     </div>
     <button type="submit">Save Listing</button>
     <a href="myGarage.php?action=view&car_id=<?= (int)$popup_car['car_id'] ?>">Cancel</a>
