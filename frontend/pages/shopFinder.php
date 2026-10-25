@@ -28,6 +28,11 @@ if (isset($_GET['location'])) {
 	$pick_location = trim($_GET['location']);
 }
 
+$pick_make = ''; // optional make to add to search (specific shops for selected vehicle) / empty = any
+if (isset($_GET['make'])) { 
+	$pick_make = trim($_GET['make']);
+}
+
 // fixed list / keys should be updated to match Evans 10.25
 $services = ['repair' => 'Auto repair', 'tire' => 'Tire shop', 'body_shop' => 'Body shop', 'dealer' => 'Dealership', 'car_wash' => 'Car wash'];
 
@@ -43,6 +48,7 @@ if (isset($_GET['search'])) {
 			'type' => 'shopSearch',
 			'service' => $pick_service,
 			'location' => $pick_location,
+			'make' => $pick_make, // readded to specify which shops for which vehicle / 10.25
 		]);
 		if (isset($reply['shops'])) {
 			$shops = $reply['shops'];
@@ -88,7 +94,11 @@ if (isset($_GET['search'])) {
     </div>
     <div>
       <label for="location">City or ZIP</label>
-      <input type="text" id="location" name="location" maxlength="50" placeholder="Newark, NJ" value="<?= htmlspecialchars($pick_location) ?>" />
+      <input type="text" id="location" name="location" maxlength="50" placeholder="Newark, NJ or 07101" value="<?= htmlspecialchars($pick_location) ?>" />
+    </div>
+    <div>
+      <label for="make">Make</label>
+      <input type="text" id="make" name="make" maxlength="30" placeholder="Honda (optional)" value="<?= htmlspecialchars($pick_make) ?>" />
     </div>
     <button type="submit">Search</button>
 </form>
