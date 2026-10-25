@@ -6,7 +6,7 @@ require __DIR__ . '/../lib/backend.php';
 
 // Copied from myGarage.php
 
-// Shop Finder: search for shops near entered location or user's current location
+// Shop Finder: search for shops near entered location
 // Results from Google Places 
 
 // session checker
@@ -28,8 +28,7 @@ if (isset($_GET['location'])) {
 	$pick_location = trim($_GET['location']);
 }
 
-// fixed list for dropdowns / updated to match Evans 10.25
-// no dropdown cause Evans only uses radius with coords + city search
+// fixed list / keys should be updated to match Evans 10.25
 $services = ['repair' => 'Auto repair', 'tire' => 'Tire shop', 'body_shop' => 'Body shop', 'dealer' => 'Dealership', 'car_wash' => 'Car wash'];
 
 // runs search when form is sent 
