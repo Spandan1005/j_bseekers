@@ -19,7 +19,7 @@ function doShopSearch($request): array {
         error_log('doShopSearch: ' . $error->getmessage());
         $result = search_error('Unexpected error occured ');
         }
-}
+} return $result;
 
 chdir(__DIR__ . '/../../RabbitMQ');
 $server = new rabbitMQServer("dmz.ini", "dmzShops");
