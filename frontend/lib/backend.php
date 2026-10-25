@@ -27,7 +27,8 @@ const MQ_ROUTES = [
 'delete_listing' => ['listing.ini', 'deleteListing'],
 'get_years' => ['vehicle.ini', 'vehicleYears'],
 'get_makes' => ['vehicle.ini', 'vehicleMakes'],
-'get_models' => ['vehicle.ini', 'vehicleModels']];
+'get_models' => ['vehicle.ini', 'vehicleModels']
+];
 
 function mq_error($message) {
 return ['status' => 'error', 'message' => $message]; } //follows the naming convention from Kurt's stuff
