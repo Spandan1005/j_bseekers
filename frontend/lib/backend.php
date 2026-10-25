@@ -27,8 +27,7 @@ const MQ_ROUTES = [
 'delete_listing' => ['listing.ini', 'deleteListing'],
 'get_years' => ['vehicle.ini', 'vehicleYears'],
 'get_makes' => ['vehicle.ini', 'vehicleMakes'],
-'get_models' => ['vehicle.ini', 'vehicleModels'],
-'shopSearch' => ['dmz.ini', 'dmzShops']
+'get_models' => ['vehicle.ini', 'vehicleModels']
 ];
 
 function mq_error($message) {
