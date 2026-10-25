@@ -20,6 +20,7 @@ const MQ_ROUTES = [
 'write_review' => ['review.ini', 'reviewWrite'],
 'remove_review' => ['review.ini', 'reviewDelete'],
 'get_vehicle_info' => ['review.ini', 'reviewVehicleInfo'],
+'shopSearch' => ['dmz.ini', 'dmzShops'],
 'create_listing' => ['listing.ini', 'createListing'],
 'read_listing' => ['listing.ini', 'readListing'],
 'update_listing' => ['listing.ini', 'updateListing'],
@@ -27,7 +28,7 @@ const MQ_ROUTES = [
 'get_years' => ['vehicle.ini', 'vehicleYears'],
 'get_makes' => ['vehicle.ini', 'vehicleMakes'],
 'get_models' => ['vehicle.ini', 'vehicleModels'],
-'shopSearch' => ['dmz.ini', 'dmzShopFinder']
+'shopSearch' => ['dmz.ini', 'dmzShops']
 ];
 
 function mq_error($message) {
