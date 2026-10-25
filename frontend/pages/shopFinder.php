@@ -33,14 +33,9 @@ if (isset($_GET['make'])) {
 	$pick_make = trim($_GET['make']);
 }
 
-$pick_radius = 10; // Evans' default radius
-if (isset($_GET['radius'])) {
-	$pick_radius = (int)$_GET['radius'];
-}
-
 // fixed list for dropdowns / updated to match Evans 10.25
+// no dropdown cause Evans only uses radius with coords + city search
 $services = ['repair' => 'Auto repair', 'tire' => 'Tire shop', 'body_shop' => 'Body shop', 'dealer' => 'Dealership', 'car_wash' => 'Car wash'];
-$radiuses = [5, 10, 25];
 
 // makes from user's garage / same req as myGarage
 $makes = [];
@@ -52,6 +47,9 @@ $garage = send_request([
 if (isset($garage['cars'])) {
 	foreach ($garage['cars'] as $car) {
 		$makes[] = $car['make'];
+		if (!in_array($car['make'], $makes)) { 
+			$makes[] = $car['make'];
+		}
 	}
 }
 
@@ -59,16 +57,15 @@ if (isset($garage['cars'])) {
 $searched = false;
 $shops = [];
 if (isset($_GET['search'])) {
-	if ($pick_location == '') { // dont send blank search cause of usage
-		$msg = 'Type a city or ZIP to search shops.';
+	if ($pick_location == '' | $pick_service == '') { // dont send blank search cause of usage
+		$msg = 'Select a service and type a city or ZIP.';
 	} else {
 		$searched = true;
 		$reply = send_request([ // straight to DMZ / no session key cause public
 			'type' => 'shopSearch',
 			'service' => $pick_service,
 			'location' => $pick_location,
-			'makes' => $pick_make,
-			'radius_miles' => $pick_radius,
+			'make' => $pick_make,
 		]);
 		if (isset($reply['shops'])) {
 			$shops = $reply['shops'];
@@ -129,18 +126,6 @@ if (isset($_GET['search'])) {
       <label for="location">City or ZIP</label>
       <input type="text" id="location" name="location" maxlength="50" placeholder="Newark, NJ" value="<?= htmlspecialchars($pick_location) ?>" />
     </div>
-    <div>
-      <label for="radius">Within</label>
-      <select id="radius" name="radius">
-    <?php foreach ($radiuses as $r): ?>
-      <?php if ($r == $pick_radius): // keeps picked radius selected ?>
-        <option value="<?= (int)$r ?>" selected><?= (int)$r ?> miles</option>
-      <?php else: ?>
-        <option value="<?= (int)$r ?>"><?= (int)$r ?> miles</option>
-      <?php endif; ?>
-    <?php endforeach; ?>
-      </select>
-    </div>
     <button type="submit">Search</button>
 </form>
 
@@ -155,22 +140,8 @@ if (isset($_GET['search'])) {
 <div>
   <p><strong><?= htmlspecialchars($s['name']) ?></strong></p>
   <p><?= htmlspecialchars($s['address']) ?></p>
-  <?php if ($s['rating']): // some shops dont have rating ?>
-  <p>Ratings: <?= htmlspecialchars($s['rating']) ?> / 5</p>
-  <?php endif; ?>
-  <?php if ($s['open_now'] === true): // null= Google doesnt know store hours ?>
-  <p>Open now</p>
-  <?php elseif ($s['open_now'] === false): ?>
-  <p>Closed now</p>
-  <?php endif; ?>
-  <?php if ($s['phone']): ?>
-  <p>Phone: <?= htmlspecialchars($s['phone']) ?></p>
-  <?php endif; ?>
   <?php // _blank opens in new tab so search doesnt disappear ?>
   <p><a href="<?= htmlspecialchars($s['maps_url']) ?>" target="_blank">Open in Google Maps</a></p>
-  <?php if ($s['website']): ?>
-  <p><a href="<?= htmlspecialchars($s['website']) ?>" target="_blank">Website</a></p>
-  <?php endif; ?>
 </div>
 <?php endforeach; ?>
 <?php endif; ?>
