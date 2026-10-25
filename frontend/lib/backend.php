@@ -20,6 +20,7 @@ const MQ_ROUTES = [
 'write_review' => ['review.ini', 'reviewWrite'],
 'remove_review' => ['review.ini', 'reviewDelete'],
 'get_vehicle_info' => ['review.ini', 'reviewVehicleInfo'],
+'shopSearch' => ['dmz.ini', 'dmzShops'],
 'create_listing' => ['listing.ini', 'createListing'],
 'read_listing' => ['listing.ini', 'readListing'],
 'update_listing' => ['listing.ini', 'updateListing'],
