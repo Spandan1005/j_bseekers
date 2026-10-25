@@ -31,9 +31,18 @@ function places_build_body($service, $location, $make) {
 $info = SHOP_SERVICES[$service];
 
 $query = $info['query'];
-if ($service === 'dealer' && $make !== '') {
-$query = "$make dealer";
+// if ($service === 'dealer' && $make !== '') {
+// $query = "$make dealer";
+// }
+
+if ($make !== '') {
+	if ($service === 'dealer') {
+		$query = "$make dealer";
+	} elseif ($service !== 'car_wash') {
+		$query = "$make " . $info['query'];
+	}
 }
+
 $query .= " near $location";
 
 $body = [
