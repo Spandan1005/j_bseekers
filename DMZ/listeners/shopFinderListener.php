@@ -22,7 +22,7 @@ function doShopSearch($request): array {
 }
 
 chdir(__DIR__ . '/../../RabbitMQ');
-$server = new rabbitMQServer("dmz.ini", "dmzShops");
+$server = new rabbitMQServer("dmz.ini", "dmzShopFinder");
 echo "SHOP FINDER Listener | UP | Listening to 'Shop Searches'..." . PHP_EOL;
 $server->process_requests('doShopSearch');
 echo "SHOP FINDER Listener | DN | Exiting..." . PHP_EOL;
