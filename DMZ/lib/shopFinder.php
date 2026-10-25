@@ -6,9 +6,7 @@ const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText';
 const PLACES_FIELDS = 'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri';
 
 const PLACES_TIMEOUT = 10;        // seconds. the frontend waits on this reply, so never hang
-const PLACES_MAX_RESULTS = 10;
-const PLACES_DEFAULT_RADIUS = 16093;
-const PLACES_MAX_RADIUS = 50000;     
+const PLACES_MAX_RESULTS = 10;     
 
 //since google places are broad, users now have fixed list of services.(note to Kurt)
 const SHOP_SERVICES = [
@@ -28,17 +26,8 @@ $env = @parse_ini_file(__DIR__ . '/../emails.env') ?: [];
 return getenv('PLACES_API_KEY') ?: ($env['PLACES_API_KEY'] ?? '');
 }
 
-//
-function places_miles($lat1, $lng1, $lat2, $lng2) {
-$r = 3958.8; // earth radius in miles
-$dLat = deg2rad($lat2 - $lat1);
-$dLng = deg2rad($lng2 - $lng1);
-$a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
-return $r * 2 * atan2(sqrt($a), sqrt(1 - $a));
-}
 
-
-function places_build_body($service, $location, $make, $radius, $lat, $lng) {
+function places_build_body($service, $location, $make) {
 $info = SHOP_SERVICES[$service];
 
 $query = $info['query'];
@@ -52,14 +41,6 @@ $body = [
 'includedType' => $info['type'],
 'pageSize' => PLACES_MAX_RESULTS,
 ];
-
-
-if ($lat !== null && $lng !== null) {
-$body['locationBias'] = ['circle' => [
-'center' => ['latitude' => $lat, 'longitude' => $lng],
-'radius' => (float)$radius,
-]];
-}
 return $body;
 }
 
@@ -106,25 +87,6 @@ if ($make !== '' && !preg_match('/^[A-Za-z0-9 -]{1,30}$/', $make)) {
 return search_error('Invalid make');
 }
 
-$radius = (float)($request['radius_m'] ?? 0);
-if ($radius <= 0 && isset($request['radius_miles'])) {
-$radius = (float)$request['radius_miles'] * 1609.34;
-}
-if ($radius <= 0) {
-$radius = PLACES_DEFAULT_RADIUS;
-}
-$radius = min($radius, PLACES_MAX_RADIUS);
-
-$lat = null;
-$lng = null;
-if (isset($request['lat'], $request['lng']) && is_numeric($request['lat']) && is_numeric($request['lng'])) {
-$lat = (float)$request['lat'];
-$lng = (float)$request['lng'];
-if ($lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) {
-return search_error('Invalid coordinates');
-}
-}
-
 $key = places_key();
 if (!$key) {
 return search_error('Places API key is missing on the DMZ server');
@@ -156,8 +118,6 @@ $shop = [
 'place_id' => (string)($p['id'] ?? ''),
 'name' => (string)($p['displayName']['text'] ?? ''),
 'address' => (string)($p['formattedAddress'] ?? ''),
-'lat' => isset($p['location']['latitude']) ? (float)$p['location']['latitude'] : null,
-'lng' => isset($p['location']['longitude']) ? (float)$p['location']['longitude'] : null,
 'maps_url' => (string)($p['googleMapsUri'] ?? ''),
 'distance_miles' => null,
 ];
@@ -165,21 +125,7 @@ if ($shop['place_id'] === '' || $shop['name'] === '') {
 continue;
 }
 
-
-if ($lat !== null && $shop['lat'] !== null) {
-$miles = places_miles($lat, $lng, $shop['lat'], $shop['lng']);
-if ($miles * 1609.34 > $radius) {
-continue;
-}
-$shop['distance_miles'] = round($miles, 1);
-}
 $shops[] = $shop;
 }
-
-// closest first when we know distances
-if ($lat !== null) {
-usort($shops, fn($a, $b) => $a['distance_miles'] <=> $b['distance_miles']);
-}
-
 return ['status' => 'success', 'shops' => $shops];
 }
