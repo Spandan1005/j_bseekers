@@ -3,7 +3,7 @@
 
 const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText';
 
-const PLACES_FIELDS = 'places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri';
+const PLACES_FIELDS = 'places.id,places.displayName,places.formattedAddress,places.googleMapsUri';
 
 const PLACES_TIMEOUT = 10;        // seconds. the frontend waits on this reply, so never hang
 const PLACES_MAX_RESULTS = 10;     
@@ -92,7 +92,7 @@ if (!$key) {
 return search_error('Places API key is missing on the DMZ server');
 }
 
-$body = places_build_body($service, $location, $make, $radius, $lat, $lng);
+$body = places_build_body($service, $location, $make);
 [$code, $data] = places_post($body, $key);
 
 // logs for debugging
@@ -119,7 +119,6 @@ $shop = [
 'name' => (string)($p['displayName']['text'] ?? ''),
 'address' => (string)($p['formattedAddress'] ?? ''),
 'maps_url' => (string)($p['googleMapsUri'] ?? ''),
-'distance_miles' => null,
 ];
 if ($shop['place_id'] === '' || $shop['name'] === '') {
 continue;
