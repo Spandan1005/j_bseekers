@@ -9,14 +9,15 @@ require_once __DIR__ . '/../lib/recallEmail.php';
 function doRecallEmails($request): array {
 	try{
 	if (!is_array($request)){
-	return email_error('Bad Request');
+	$result = email_error('Bad Request');
 	}
-	return email_handle($request);
+	$results= email_handle($request);
 	}
 	catch (Throwable $error) {
 	error_log('doRecallEmails: ' . $error->getmessage());
-	return email_error('Unexpected error occured ');
+	$results= email_error('Unexpected error occured ');
 	}
+return $result;
 }
 
 chdir(__DIR__ . '/../../RabbitMQ');
