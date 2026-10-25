@@ -28,36 +28,15 @@ if (isset($_GET['location'])) {
 	$pick_location = trim($_GET['location']);
 }
 
-$pick_make = ''; // from make dropdown / empty = any
-if (isset($_GET['make'])) {
-	$pick_make = trim($_GET['make']);
-}
-
 // fixed list for dropdowns / updated to match Evans 10.25
 // no dropdown cause Evans only uses radius with coords + city search
 $services = ['repair' => 'Auto repair', 'tire' => 'Tire shop', 'body_shop' => 'Body shop', 'dealer' => 'Dealership', 'car_wash' => 'Car wash'];
-
-// makes from user's garage / same req as myGarage
-$makes = [];
-$garage = send_request([
-	'type' => 'get_garage',
-	'session_key' => $_SESSION['session_key'],
-	'username' => $_SESSION['username'],
-]);
-if (isset($garage['cars'])) {
-	foreach ($garage['cars'] as $car) {
-		$makes[] = $car['make'];
-		if (!in_array($car['make'], $makes)) { 
-			$makes[] = $car['make'];
-		}
-	}
-}
 
 // runs search when form is sent 
 $searched = false;
 $shops = [];
 if (isset($_GET['search'])) {
-	if ($pick_location == '' | $pick_service == '') { // dont send blank search cause of usage
+	if ($pick_location == '' || $pick_service == '') { // dont send blank search cause of usage
 		$msg = 'Select a service and type a city or ZIP.';
 	} else {
 		$searched = true;
@@ -65,7 +44,6 @@ if (isset($_GET['search'])) {
 			'type' => 'shopSearch',
 			'service' => $pick_service,
 			'location' => $pick_location,
-			'make' => $pick_make,
 		]);
 		if (isset($reply['shops'])) {
 			$shops = $reply['shops'];
@@ -109,19 +87,6 @@ if (isset($_GET['search'])) {
     <?php endforeach; ?>
       </select>
     </div>
-    <div> 
-      <label for="make">For my car</label>
-      <select id="make" name="make">
-    <option value="">-- Any make --</option>
-    <?php foreach ($makes as $m): // escape since it comes from API through garage ?>
-      <?php if ($m === $pick_make): // keeps picked make selected after search ?>
-        <option value="<?= htmlspecialchars($m) ?>" selected><?= htmlspecialchars($m) ?></option>
-      <?php else: ?>
-        <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
-      <?php endif; ?>
-    <?php endforeach; ?>
-        </select>
-      </div>
     <div>
       <label for="location">City or ZIP</label>
       <input type="text" id="location" name="location" maxlength="50" placeholder="Newark, NJ" value="<?= htmlspecialchars($pick_location) ?>" />
