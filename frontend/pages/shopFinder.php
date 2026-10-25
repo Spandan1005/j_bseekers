@@ -1,38 +1,82 @@
 <?php
+session_start();
 require __DIR__ . '/../lib/backend.php';
 
-// Kurt Castro | 9.28
-// css styling not needed right now
+// Kurt Castro | 10.24
 
-// backend connection (also works now because of Spandan finishing backend.php)
+// Copied from myGarage.php
+
+// Shop Finder: search for shops near entered location or user's current location
+// Results from Google Places 
+
+// session checker
+if (empty($_SESSION['session_key'])) {
+	header('Location: login.php'); // redirects to login if no session key
+	exit;
+}
+
 $msg = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form submission
-    $email = trim($_POST['email']);
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
-    $confirm = $_POST['confirm'];
 
-    if ($email == '' || $username == '' || $password == '' || $confirm == '') { // server-side checks for empty fields
-	    $msg = 'All fields are required.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) { // checks if email format is valid
-	    $msg = 'Invalid email address.';
-    } elseif (strlen($password) < 10) {
-	    $msg = 'Password must be at least 10 characters.';
-    } elseif ($password !== $confirm) {
-	    $msg = 'Passwords do not match.';
-    } else {
-	    $reply = send_request([ // sends fields to DB (DB hashes pw) 
-		    'type' => 'register',
-		    'email' => $email,
-		    'username' => $username,
-		    'password' => $password,
-	    ]);
-	    if ($reply['status'] === 'success') {
-		    header('Location: login.php');
-		    exit;
-	    }
-	    $msg = $reply['message'];
-    }
+// what user picked in search (service)
+$pick_service = '';
+if (isset($_GET['service'])) {
+	$pick_service = trim($_GET['service']);
+}
+
+$pick_location = '';
+if (isset($_GET['location'])) {
+	$pick_location = trim($_GET['location']);
+}
+
+$pick_make = ''; // from make dropdown / empty = any
+if (isset($_GET['make'])) {
+	$pick_make = trim($_GET['make']);
+}
+
+$pick_radius = 10; // Evans' default radius
+if (isset($_GET['radius'])) {
+	$pick_radius = (int)$_GET['radius'];
+}
+
+// fixed list for dropdowns / updated to match Evans 10.25
+$services = ['repair' => 'Auto repair', 'tire' => 'Tire shop', 'body_shop' => 'Body shop', 'dealer' => 'Dealership', 'car_wash' => 'Car wash'];
+$radiuses = [5, 10, 25];
+
+// makes from user's garage / same req as myGarage
+$makes = [];
+$garage = send_request([
+	'type' => 'get_garage',
+	'session_key' => $_SESSION['session_key'],
+	'username' => $_SESSION['username'],
+]);
+if (isset($garage['cars'])) {
+	foreach ($garage['cars'] as $car) {
+		$makes[] = $car['make'];
+	}
+}
+
+// runs search when form is sent 
+$searched = false;
+$shops = [];
+if (isset($_GET['search'])) {
+	if ($pick_location == '') { // dont send blank search cause of usage
+		$msg = 'Type a city or ZIP to search shops.';
+	} else {
+		$searched = true;
+		$reply = send_request([ // straight to DMZ / no session key cause public
+			'type' => 'shopSearch',
+			'service' => $pick_service,
+			'location' => $pick_location,
+			'makes' => $pick_make,
+			'radius_miles' => $pick_radius,
+		]);
+		if (isset($reply['shops'])) {
+			$shops = $reply['shops'];
+		}
+		if ($reply['status'] !== 'success') { // show DMZ error
+			$msg = $reply['message'];
+		}
+	}
 }
 ?>
 
@@ -40,64 +84,97 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // only runs after form submission
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Register</title>
+  <title>Shop Finder</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
-<h3>Register</h3>
-<form onsubmit="return validate(this)" method="POST">
-    <div>
-	<label for="email">Email</label>
-	<input id="email" type="email" name="email" required />
-    </div>
-    <div>
-	<label for="username">Username</label>
-	<input type="text" name="username" required maxlength="20" />
-    </div>
-    <div>
-	<label for="pw">Password</label>
-	<input type="password" id="pw" name="password" required minlength="10" />
-    </div>
-    <div>
-	<label for="confirm">Confirm</label>
-	<input type="password" name="confirm" required minlength="10" />
-    </div>
-    <input type="submit" value="Register" />
-</form>
-<p>Already have an account? <a href="login.php">Log in</a></p> 
+<h3>Shop Finder</h3>
+<p><a href="home.php">Home</a></p>
 
 <?php if ($msg): // prevent XSS by escaping <,> so HTML can't be ran in msg ?> 
   <p><?= htmlspecialchars($msg) ?></p>
 <?php endif; ?>
 
-<script>
-function validate (form) { // client checks before form submission
-	let email = form.email.value;
-	let username = form.username.value;
-	let password = form.password.value;
-	let confirm = form.confirm.value;
-	let isValid = true;
+<?php // search form / similar to reviews search ?>
+<form method="GET" action="shopFinder.php" id="shopform">
+    <input type="hidden" name="search" value="1" />
+    <div>
+      <label for="service">Service</label>
+      <select id="service" name="service">
+    <option value="">-- Pick a service --</option>
+    <?php foreach ($services as $key => $label): // key sent to Evans ?>
+      <?php if ($key === $pick_service): // keeps service selected after search ?>
+        <option value="<?= htmlspecialchars($key) ?>" selected><?= htmlspecialchars($label) ?></option>
+      <?php else: ?>
+        <option value="<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($label) ?></option>
+      <?php endif; ?>
+    <?php endforeach; ?>
+      </select>
+    </div>
+    <div> 
+      <label for="make">For my car</label>
+      <select id="make" name="make">
+    <option value="">-- Any make --</option>
+    <?php foreach ($makes as $m): // escape since it comes from API through garage ?>
+      <?php if ($m === $pick_make): // keeps picked make selected after search ?>
+        <option value="<?= htmlspecialchars($m) ?>" selected><?= htmlspecialchars($m) ?></option>
+      <?php else: ?>
+        <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
+      <?php endif; ?>
+    <?php endforeach; ?>
+        </select>
+      </div>
+    <div>
+      <label for="location">City or ZIP</label>
+      <input type="text" id="location" name="location" maxlength="50" placeholder="Newark, NJ" value="<?= htmlspecialchars($pick_location) ?>" />
+    </div>
+    <div>
+      <label for="radius">Within</label>
+      <select id="radius" name="radius">
+    <?php foreach ($radiuses as $r): ?>
+      <?php if ($r == $pick_radius): // keeps picked radius selected ?>
+        <option value="<?= (int)$r ?>" selected><?= (int)$r ?> miles</option>
+      <?php else: ?>
+        <option value="<?= (int)$r ?>"><?= (int)$r ?> miles</option>
+      <?php endif; ?>
+    <?php endforeach; ?>
+      </select>
+    </div>
+    <button type="submit">Search</button>
+</form>
 
-	if (!form.email.checkValidity()) { // checks for invalid email format
-		alert("Invalid email format");
-		isValid = false;
-	}
-	if (!/^[a-zA-Z0-9_-]{5,20}$/.test(username)) { // only alphanumerical, uppercase, lowercase, _, - and min charlength 5, max 20
-		alert("Invalid username format");
-		isValid = false;
-	}
-	if (password.length < 10) {
-		alert("Password must be at least 10 characters");
-		isValid = false;
-	}
-	if (password !== confirm) { // password validation
-		alert("Passwords do not match");
-		isValid = false;
-	}
-	return isValid;
-}
-</script>
+<?php if (!$searched): ?>
+<p>Pick a service and type a city or ZIP, then click Search.</p>
+<?php else: ?>
+<h3>Shops near <?= htmlspecialchars($pick_location) ?></h3>
+<?php if (!$shops): ?>
+<p>No shops found.</p>
+<?php endif; ?>
+<?php foreach ($shops as $s): // escape since its from API ?>
+<div>
+  <p><strong><?= htmlspecialchars($s['name']) ?></strong></p>
+  <p><?= htmlspecialchars($s['address']) ?></p>
+  <?php if ($s['rating']): // some shops dont have rating ?>
+  <p>Ratings: <?= htmlspecialchars($s['rating']) ?> / 5</p>
+  <?php endif; ?>
+  <?php if ($s['open_now'] === true): // null= Google doesnt know store hours ?>
+  <p>Open now</p>
+  <?php elseif ($s['open_now'] === false): ?>
+  <p>Closed now</p>
+  <?php endif; ?>
+  <?php if ($s['phone']): ?>
+  <p>Phone: <?= htmlspecialchars($s['phone']) ?></p>
+  <?php endif; ?>
+  <?php // _blank opens in new tab so search doesnt disappear ?>
+  <p><a href="<?= htmlspecialchars($s['maps_url']) ?>" target="_blank">Open in Google Maps</a></p>
+  <?php if ($s['website']): ?>
+  <p><a href="<?= htmlspecialchars($s['website']) ?>" target="_blank">Website</a></p>
+  <?php endif; ?>
+</div>
+<?php endforeach; ?>
+<?php endif; ?>
+
 </main>
 </body>
 </html>
