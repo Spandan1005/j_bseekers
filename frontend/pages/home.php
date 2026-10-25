@@ -25,12 +25,9 @@ if (empty($_SESSION['session_key'])) { // checks for session key, if none then r
   <h3>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></h3>
   <?php // links to main pages, only shown after login ?>
   <p><a href="myGarage.php">My Garage</a></p>
+  <p><a href="reviews.php">Reviews</a></p>
+  <p><a href="shopFinder.php">Shop Finder</a></p> <!-- Andrew Galella 10.25.2026 - adding a shopfinder link to the homepage -->
   <p><a href="myAccount.php">My Account</a></p>
-
-  <p><a href="nhtsaApiTest.php">Recall Test</a></p>
-
-  <p><a href="apiNinja.php">Car Ninja API Test</a></p>
-
   <p><a href="logout.php">Log out</a></p>
 
 </main>

@@ -20,9 +20,15 @@ const MQ_ROUTES = [
 'write_review' => ['review.ini', 'reviewWrite'],
 'remove_review' => ['review.ini', 'reviewDelete'],
 'get_vehicle_info' => ['review.ini', 'reviewVehicleInfo'],
+'shopSearch' => ['dmz.ini', 'dmzShops'],
+'create_listing' => ['listing.ini', 'createListing'],
+'read_listing' => ['listing.ini', 'readListing'],
+'update_listing' => ['listing.ini', 'updateListing'],
+'delete_listing' => ['listing.ini', 'deleteListing'],
 'get_years' => ['vehicle.ini', 'vehicleYears'],
 'get_makes' => ['vehicle.ini', 'vehicleMakes'],
-'get_models' => ['vehicle.ini', 'vehicleModels']];
+'get_models' => ['vehicle.ini', 'vehicleModels']
+];
 
 function mq_error($message) {
 return ['status' => 'error', 'message' => $message]; } //follows the naming convention from Kurt's stuff

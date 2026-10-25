@@ -20,5 +20,5 @@ function isFresh(mysqli $db, string $table, int $year, string $make, string $mod
     if ($fetched && $date === null) {
         return false;
     }
-    return (time() - (int)$date) <= 7200;
+    return (time() - (int)$date) <= 900;
 }

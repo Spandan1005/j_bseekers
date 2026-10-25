@@ -20,7 +20,7 @@ function addReview($request): array {
     $make = $request['make'];
     $model = $request['model'];
     $rating = $request['rating'];
-    $review = $request['review'];
+    $review = $request['review'] ?? null;
 
     $validate = doValidate($user, $session_key);
     if ($validate['status'] !== 'success')
