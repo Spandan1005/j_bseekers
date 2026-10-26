@@ -10,12 +10,13 @@ function doRecallEmails($request): array {
 	try{
 	if (!is_array($request)){
 	$result = email_error('Bad Request');
+	}else{
+	$result= email_handle($request);
 	}
-	$results= email_handle($request);
 	}
 	catch (Throwable $error) {
 	error_log('doRecallEmails: ' . $error->getmessage());
-	$results= email_error('Unexpected error occured ');
+	$result= email_error('Unexpected error occured ');
 	}
 return $result;
 }
