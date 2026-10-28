@@ -3,7 +3,7 @@
 
 function search_error($message){
 return ['status' => "error", "message" =>$message];
-
+}
 function search_handle ($request) {
 
 $url ='https://places.googleapis.com/v1/places:searchText';
@@ -17,20 +17,20 @@ $services = [
 'body_shop' => ['query'=>'auto body shop', 'type' =>'car_repair'],
 'dealer' => ['query'=>'car dealer', 'type' =>'car_dealer'],
 'car_wash' => ['query'=>'car wash', 'type' =>'car_wash']
-]
+];
 
-$service =trim((string)($request["service"] ??'')): //refrence to line 47
+$service =trim((string)($request["service"] ??'')); //refrence to line 47
 $location =trim((string)($request["location"] ?? ''));
-$make =trim(string)($request['make] ?? ''));
+$make =trim((string)($request['make] ?? ''));
 
 //continuing from where i left off
-if (isset($services[$service])) {
+if (!isset($services[$service])) {
 return search_error('Unknown service type');
 } 
-//even tho its been validated but doesnt hurt to do it again.
-if (!preg_match('/^\d{5}$/', $location) && !preg_match("/^[A-Za-z0-9 ,.'->
+//even tho its been validated but doesnt kurt to do it again.
+if (!preg_match('/^\d{5}$/', $location) && !preg_match("/^[A-Za-z0-9 ,.'-]{2,60}$/", $location)){
 return search_error("Location must be a 5 digit ZIP or a City and state");
-
+}
 if ($make !== '' && !preg_match('/^[A-Za-z0-9 -]{1,30}$/', $make)) {
 return search_error('Invalid make');
 }
@@ -40,11 +40,11 @@ $env = @parse_ini_file(__DIR__ . '/../emails.env') ?: [];
 $api = getenv('PLACES_API_KEY') ?: ($env['PLACES_API_KEY'] ?? '');
 
 if (!$api) {
-return search_error ('Api is missing')
+return search_error ('Api is missing');
 }
 
 //kurts redifined function
-$info = services[$service];
+$info = $services[$service];
 $query = $info['query'];
 
 if ($make !== '') {
@@ -59,8 +59,6 @@ $query .= " near $location";
 $body = [
 'textQuery' => $query,'includedType' => $info['type'],'pageSize' => $maxResults,
 ];
-return $body;
-}
 
 $context = stream_context_create(['http' => [
 'method' => 'POST',
@@ -72,13 +70,12 @@ $context = stream_context_create(['http' => [
 $req= @file_get_contents($url, false, $context); // @ignores warnings,
 
 if ($req== false){
-return search_error ('couldnt reach the shop')
+return search_error ('couldnt reach the shop');
 }
 $data= json_decode($req, true);
 
 if (!is_array($data)) {
-echo "Got a reply but it wasn't in JSON format.\n"; 
-exit;
+return search_error ("Got a reply but it wasn't in JSON format.\n"); 
 }
 
 
