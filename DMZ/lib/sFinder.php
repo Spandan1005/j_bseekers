@@ -11,7 +11,7 @@ $fields= 'places.id,places.displayName,places.formattedAddress,places.googleMaps
 $maxResults = 10; 
 
 //recieves inuts from Kurt then query them to specific google search
-services = [
+$services = [
 'repair' => ['query'=>'auto repair', 'type' =>'car_repair'],
 'tire' => ['query'=>'tire shop', 'type' =>'tire_shop'],
 'body_shop' => ['query'=>'auto body shop', 'type' =>'car_repair'],
@@ -24,7 +24,7 @@ $location =trim((string)($request["location"] ?? ''));
 $make =trim(string)($request['make] ?? ''));
 
 //continuing from where i left off
-if (isset(services[service])) {
+if (isset($services[$service])) {
 return search_error('Unknown service type');
 } 
 //even tho its been validated but doesnt hurt to do it again.
@@ -64,9 +64,33 @@ return $body;
 
 $context = stream_context_create(['http' => [
 'method' => 'POST',
-'header' => "Content-Type: application/json\r\n" . "X-Goog-Api-Key: $key\r\n" . "X-Goog-FieldMask: " . $fields . "\r\n",
+'header' => "Content-Type: application/json\r\n" . "X-Goog-Api-Key: $api\r\n" . "X-Goog-FieldMask: " . $fields . "\r\n",
 'content' => json_encode($body),'ignore_errors' => true, ]
 ]);
 
 //making the actual request
-$request= 
+$req= @file_get_contents($url, false, $context); // @ignores warnings,
+
+if ($req== false){
+return search_error ('couldnt reach the shop')
+}
+$data= json_decode($req, true);
+
+if (!is_array($data)) {
+echo "Got a reply but it wasn't in JSON format.\n"; 
+exit;
+}
+
+
+//(formatting the outputting to frontend(Kurt)
+$shops =[];
+
+foreach ($data['places'] ?? [] as $place) {
+$shops[
+'name'=> (string)($places['displayName']['text'] ?? ''),
+'address'=> (string)($place['formattedAddress'] ?? ''),
+'maps_url'=> (string)($plase['googleMapsUri'] ?? ''),
+];
+}
+return ['status' => 'success', 'shops' => $shops];
+}
