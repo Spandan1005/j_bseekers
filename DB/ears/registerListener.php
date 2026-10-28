@@ -59,14 +59,14 @@ function doRegister($request): array {
     }
     catch (mysqli_sql_exception $e) {
         // throw specific error if a field that must be unique was not unique
-        if ($e->getCode === 1062) {
+        if ($e->getCode() === 1062) { // get code is a method so this would not have worked
             return [
                 'status' => 'error',
                 'message' => 'Username or email must be unique.'
             ];
         }
         // generic error
-        error_log('doLogin: ' . $e->getMessage());
+        error_log('doRegister: ' . $e->getMessage()); // error message didn't correspond correctly
         return [
             'status' => 'error',
             'message' => 'Unexpected error occurred.'
