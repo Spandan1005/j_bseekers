@@ -21,10 +21,11 @@ $services = [
 
 $service =trim((string)($request["service"] ??'')); //refrence to line 47
 $location =trim((string)($request["location"] ?? ''));
-$make =trim((string)($request['make] ?? ''));
+$make =trim((string)($request['make'] ?? ''));
 
 //continuing from where i left off
 if (!isset($services[$service])) {
+error_log("search_handle: google error");
 return search_error('Unknown service type');
 } 
 //even tho its been validated but doesnt kurt to do it again.
@@ -83,10 +84,10 @@ return search_error ("Got a reply but it wasn't in JSON format.\n");
 $shops =[];
 
 foreach ($data['places'] ?? [] as $place) {
-$shops[
-'name'=> (string)($places['displayName']['text'] ?? ''),
+$shops[] = [
+'name'=> (string)($place['displayName']['text'] ?? ''),
 'address'=> (string)($place['formattedAddress'] ?? ''),
-'maps_url'=> (string)($plase['googleMapsUri'] ?? ''),
+'maps_url'=> (string)($place['googleMapsUri'] ?? ''),
 ];
 }
 return ['status' => 'success', 'shops' => $shops];
