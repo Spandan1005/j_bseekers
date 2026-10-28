@@ -5,7 +5,7 @@
 require_once __DIR__ . '/../../RabbitMQ/path.inc';
 require_once __DIR__ . '/../../RabbitMQ/get_host_info.inc';
 require_once __DIR__ . '/../../RabbitMQ/rabbitMQLib.inc';
-require_once __DIR__ . '/../lib/shopFinder.php';
+require_once __DIR__ . '/../lib/sFinder.php';
 
 function doShopSearch($request): array {
         try{
