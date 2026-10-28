@@ -19,28 +19,54 @@ services = [
 'car_wash' => ['query'=>'car wash', 'type' =>'car_wash']
 ]
 
-$service =trim((string)($request["service"] ??'')):
+$service =trim((string)($request["service"] ??'')): //refrence to line 47
 $location =trim((string)($request["location"] ?? ''));
 $make =trim(string)($request['make] ?? ''));
 
+//continuing from where i left off
+if (isset(services[service])) {
+return search_error('Unknown service type');
+} 
+//even tho its been validated but doesnt hurt to do it again.
+if (!preg_match('/^\d{5}$/', $location) && !preg_match("/^[A-Za-z0-9 ,.'->
+return search_error("Location must be a 5 digit ZIP or a City and state");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if ($make !== '' && !preg_match('/^[A-Za-z0-9 -]{1,30}$/', $make)) {
+return search_error('Invalid make');
+}
 
 
 $env = @parse_ini_file(__DIR__ . '/../emails.env') ?: [];
 $api = getenv('PLACES_API_KEY') ?: ($env['PLACES_API_KEY'] ?? '');
 
+if (!$api) {
+return search_error ('Api is missing')
+}
 
+//kurts redifined function
+$info = services[$service];
+$query = $info['query'];
+
+if ($make !== '') {
+        if ($service === 'dealer') {
+                $query = "$make dealer";
+        } elseif ($service !== 'car_wash') {
+                $query = "$make " . $info['query'];
+        }
+}
+$query .= " near $location";
+
+$body = [
+'textQuery' => $query,'includedType' => $info['type'],'pageSize' => $maxResults,
+];
+return $body;
+}
+
+$context = stream_context_create(['http' => [
+'method' => 'POST',
+'header' => "Content-Type: application/json\r\n" . "X-Goog-Api-Key: $key\r\n" . "X-Goog-FieldMask: " . $fields . "\r\n",
+'content' => json_encode($body),'ignore_errors' => true, ]
+]);
+
+//making the actual request
+$request= 
