@@ -205,24 +205,22 @@ if ($action === 'view'|| $action === 'sell' || $action === 'edit_listing') { // 
 // dropdown lists for the add popup
 // in NHTSA's order: year, make model
 // each dropdown only loads once previous one has been selected 
-$years = [];
+// $years = []; not using 11.8
 $makes = [];
 $models = [];
 
 if ($action === 'add') {
-	$reply = send_request([ // all model years NHTSA has complaint data for (straight to Evans)
-		'type' => 'get_years',
-	]);
-	if (isset($reply['years'])) {
-		$years = $reply['years'];
-        }
-	if ($pick_year != 0) { // only lists makes that were available from selected year
+	// years wont be automatically requested anymore, must be typed first 11.8
+	if ($pick_year != 0) { // only lists makes that were available from typed year
 		$reply = send_request([ 
 			'type' => 'get_makes',
 			'year' => $pick_year,
 		]);
 		if (isset($reply['makes'])) {
 			$makes = $reply['makes'];
+		}
+		if (!$makes) { // if NHTSA doesn't have data for typed year
+			$msg = 'No makes found for ' . $pick_year . '. Check the year.';
 		}
 	}
 	if ($pick_year != 0 && $pick_make != '') { // models that exist for that year + make
@@ -316,7 +314,9 @@ if ($popup_car) {
     <div>
       <label for="year">Year</label>
       <?php // updated to type year instead of dropdown 11.8 ?>
-      <input type="number" id="year" name="year" min="1950" max="2027" placeholder="2022" value="<?= htmlspecialchars($year_value) ?>" onchange="this.form.submit()" />
+      <input type="number" id="year" name="year" min="1950" max="2027" placeholder="2022" value="<?= htmlspecialchars($year_value) ?>" />
+      <?php // submit button for year entry so makes load properly 11.8 ?>
+      <button type="submit">Find Makes</button>
     </div>
     <div>
       <label for="make">Make</label>
