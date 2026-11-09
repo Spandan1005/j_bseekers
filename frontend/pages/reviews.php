@@ -32,6 +32,12 @@ if (isset($_GET['year'])) {
 	$pick_year = (int)$_GET['year'];
 }
 
+// saves the typed year after page reload (same in myGarage) 11.8
+$year_value = '';
+if ($pick_year != 0) {
+	$year_value = $pick_year;
+}
+
 $pick_make = '';
 if (isset($_GET['make'])) {
 	$pick_make = trim($_GET['make']);
@@ -228,16 +234,8 @@ if ($action === 'listings' && $searched) {
     <form method="GET" action="reviews.php">
     <div>
       <label for="year">Year</label>
-      <select id="year" name="year" onchange="this.form.submit()">
-	<option value="">-- Pick a year --</option>
-	<?php foreach ($years as $y): ?>
-	  <?php if ($y == $pick_year): // keeps the picked year selected after reload ?>
-	    <option value="<?= htmlspecialchars($y) ?>" selected><?= htmlspecialchars($y) ?></option>
-          <?php else: ?>
-	    <option value="<?= htmlspecialchars($y) ?>"><?= htmlspecialchars($y) ?></option>
-          <?php endif; ?>
-	<?php endforeach; ?>
-      </select>
+      <?php // updated year dropdown to type instead (same as in myGarage.php) 11.8 ?>
+      <input type="number" id="year" name="year" min="1950" max="2027" placeholder="2022" value="<?= htmlspecialchars($year_value) ?>" onchange="this.form.submit()" />
     </div>
     <div>
       <label for="make">Make</label>

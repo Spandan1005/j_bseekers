@@ -157,6 +157,12 @@ if (isset($_GET['year'])) {
 	$pick_year = (int)$_GET['year'];
 }
 
+// saves typed year after page reloads
+$year_value = '';
+if ($pick_year != 0) {
+	$year_value = $pick_year;
+}
+
 $pick_make = '';
 if (isset($_GET['make'])) {
 	$pick_make = trim($_GET['make']);
@@ -309,16 +315,8 @@ if ($popup_car) {
     <input type="hidden" name="action" value="add" />
     <div>
       <label for="year">Year</label>
-      <select id="year" name="year" onchange="this.form.submit()">
-	<option value="">-- Pick a year --</option>
-	<?php foreach ($years as $y): ?>
-	  <?php if ($y == $pick_year): // keeps the picked year selected after reload ?>
-	    <option value="<?= htmlspecialchars($y) ?>" selected><?= htmlspecialchars($y) ?></option>
-          <?php else: ?>
-	    <option value="<?= htmlspecialchars($y) ?>"><?= htmlspecialchars($y) ?></option>
-          <?php endif; ?>
-	<?php endforeach; ?>
-      </select>
+      <?php // updated to type year instead of dropdown 11.8 ?>
+      <input type="number" id="year" name="year" min="1950" max="2027" placeholder="2022" value="<?= htmlspecialchars($year_value) ?>" onchange="this.form.submit()" />
     </div>
     <div>
       <label for="make">Make</label>
