@@ -14,7 +14,8 @@ function cacheLog(string $message): void {
     file_put_contents(CACHE_LOG, date(DATE_RSS) . ' ' . $message .PHP_EOL, FILE_APPEND | LOCK_EX);
 }
 
-cacheLog('############ Cache Refresh | START #################');
+file_put_contents(CACHE_LOG, '' . PHP_EOL, FILE_APPEND | LOCK_EX);
+cacheLog('##################################### Cache Refresh | START #####################################');
 
 try {
     $db = getDB();
@@ -22,7 +23,11 @@ try {
     $result = $db->query("select distinct year, make, model from cars");
     $knownCars = $result->fetch_all(MYSQLI_ASSOC);
 
-    cacheLog('Distinct Vehicle(s) found: ' . count($knownCars));
+    //cacheLog('Distinct Vehicle(s) found: ' . count($knownCars));
+    cacheLog(sprintf(
+    	"%-4s | %-23s | %-27s | refreshRecall   | refreshComplaint",
+	"YEAR", "MAKE", "MODEL"));
+    cacheLog('------------------------------------------------------------------------------------------------- (' . count($knownCars) . " distinct vehicle(s) found)");
 
     $nabbed = 0;
 
@@ -35,7 +40,11 @@ try {
         $recall = refreshRecalls($db, $year, $make, $model);
         $complaint = refreshComplaints($db, $year, $make, $model);
 
-        cacheLog("$year $make $model | refreshRecall: {$recall['status']} | refreshComplaint: {$complaint['status']}");
+        //cacheLog("$year $make $model | refreshRecall: {$recall['status']} | refreshComplaint: {$complaint['status']}");
+	cacheLog(sprintf(
+		"%-4s | %-23s | %-27s | %-15s | %-16s",
+		$year, $make, $model, $recall['status'], $complaint['status']
+	));
 
         if ($recall['status'] !== 'fresh' || $complaint['status'] !== 'fresh')
         {
@@ -44,7 +53,7 @@ try {
         }
     }
     $db->close();
-    cacheLog('############ Cache Refresh | END #################');
+    cacheLog('###################################### Cache Refresh | END ######################################');
 }
 catch (Throwable $e) {
     // catchall failure
