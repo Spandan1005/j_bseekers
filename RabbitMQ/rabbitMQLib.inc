@@ -19,7 +19,7 @@ class rabbitMQServer
 	function __construct($machine, $server = "rabbitMQ")
 	{
 		$this->machine = getHostInfo(array($machine));
-		$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"];
+		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //SP 11/10
 		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
 
 		//$this->USER     = $this->machine[$server]["USER"];
@@ -32,7 +32,8 @@ class rabbitMQServer
 		$creds = require __DIR__ . '/rabbitCreds.php';
 		$this->USER = $creds['USER'];
 		$this->PASSWORD = $creds['PASSWORD'];
-		$this->VHOST = $creds['VHOST'];		
+		$this->VHOST = $creds['VHOST'];
+		$this->BROKER_HOST = $creds['BROKER_HOST']; //added this in prior to db merge and changed it to localhost SP 11/10
 
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
@@ -167,7 +168,7 @@ class rabbitMQClient
 	function __construct($machine, $server = "rabbitMQ")
 	{
 		$this->machine = getHostInfo(array($machine));
-		$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"];
+		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //commented this out SP 11/10
 		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
 
 		//$this->USER     = $this->machine[$server]["USER"];
@@ -181,6 +182,7 @@ class rabbitMQClient
 		$this->USER = $creds['USER'];
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];
+		$this->BROKER_HOST = $creds['BROKER_HOST']; //added in this line prior to db merge so it references localhost SP 11/10
 
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
