@@ -34,7 +34,9 @@ function send_request(array $payload){
 	chdir(MQ_DIR);
 	try {
 		$ini = parse_ini_file($iniFile, true); //referencing the ini file 
-		$host = $ini[$section]['BROKER_HOST'] ?? null;
+		//$host = $ini[$section]['BROKER_HOST'] ?? null; fixing bug SP 11/11
+		$creds = require MQ_DIR . '/rabbitCreds.php'; //SP 11/11
+		$host = $creds['BROKER_HOST'] ?? null; //fixed to refer to new localhost SP 11/11
 		$port = (int)($ini[$section]['BROKER_PORT'] ?? 5672); //broker IP's default port just an FYI
 		if ($host === null) {
 		return mq_error("Section [$section] is missing from " . $iniFile); //talks abt a host or a section that could be missing from ini 
@@ -73,7 +75,9 @@ function send_req_oneway(array $payload) {
 		chdir(MQ_DIR);
 		try {
 			$ini = parse_ini_file($iniFile, true); //referencing the ini file
-			$host = $ini[$section]['BROKER_HOST'] ?? null;
+			//$host = $ini[$section]['BROKER_HOST'] ?? null;
+			$creds = require MQ_DIR . '/rabbitCreds.php'; // SP 11/11
+			$host = $creds['BROKER_HOST'] ?? null; //SP 11/11
 			$port = (int)($ini[$section]['BROKER_PORT'] ?? 5672); //broker IP's default port just an FYI
 			if ($host === null) {
 				return mq_error("Section [$section] is missing from " . $iniFile); //talks abt a host or a section that could be missing from ini
