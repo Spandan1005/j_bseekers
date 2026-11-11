@@ -58,7 +58,7 @@ function addListing($request): array {
     }
     catch (Throwable $e) {
         // catchall failure
-        error_log('addListing: ' . $e->getMessage());
+	error_log('addListing: ' . $e->getMessage(), 3, "/home/snp85/error.log");
         return [
             'status' => 'error',
             'message' => 'Unexpected error.'

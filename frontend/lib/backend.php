@@ -48,7 +48,9 @@ function send_request(array $payload){
 	chdir(MQ_DIR);
 	try {
 		$ini = parse_ini_file($iniFile, true); //referencing the ini file 
-		$host = $ini[$section]['BROKER_HOST'] ?? null;
+		//$host = $ini[$section]['BROKER_HOST'] ?? null; SP 11/10
+		$creds = require MQ_DIR . '/rabbitCreds.php';
+		$host = $creds['BROKER_HOST'] ?? null; //fix to the localhost issue 
 		$port = (int)($ini[$section]['BROKER_PORT'] ?? 5672); //broker IP's default port just an FYI
 		if ($host === null) {
 		return mq_error("Section [$section] is missing from " . $iniFile); //talks abt a host or a section that could be missing from ini 
