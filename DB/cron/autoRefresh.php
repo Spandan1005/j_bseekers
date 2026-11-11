@@ -40,11 +40,12 @@ try {
         $recall = refreshRecalls($db, $year, $make, $model);
         $complaint = refreshComplaints($db, $year, $make, $model);
 
-        //cacheLog("$year $make $model | refreshRecall: {$recall['status']} | refreshComplaint: {$complaint['status']}");
+        //cacheLog("$year $make $model | refreshRecall: {$recall['message']} | refreshComplaint: {$complaint['message']}");
 	cacheLog(sprintf(
 		"%-4s | %-23s | %-27s | %-15s | %-16s",
 		$year, $make, $model, $recall['status'], $complaint['status']
 	));
+	
 
         if ($recall['status'] !== 'fresh' || $complaint['status'] !== 'fresh')
         {
