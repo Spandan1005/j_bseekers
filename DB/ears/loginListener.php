@@ -28,6 +28,7 @@ function doLogin($request): array {
             'message' => 'All field are required.'
         ];
     }
+    echo "made it to try block";
     try {
         // pull an email address from db assoc with user and pass provided
         // if email is null, there was no record, return fail
@@ -39,7 +40,8 @@ function doLogin($request): array {
         $stmt->bind_result($email);
         $fetched = $stmt->fetch();
         $stmt->close();
-        $db->close();
+	$db->close();
+	echo "$email";
         if ($fetched && isset($email)) {
             $db2 = getDB();
             $stmt = $db2->prepare("update users set last_login = UNIX_TIMESTAMP() where username = ?");
@@ -48,7 +50,8 @@ function doLogin($request): array {
             $stmt->close();
             // create record of session key in the sessions table with a ttl.  this will be used
             // in validation.php library.  Andrew Galella 10/14/2026
-            $session_key = bin2hex(random_bytes(32));
+	    $session_key = bin2hex(random_bytes(32));
+	    echo "$session_key";
 
             $stmt = $db2->prepare("insert into sessions (session_key, username, expiration) values (SHA2(?,256), ?, UNIX_TIMESTAMP()+7200)");
             $stmt->bind_param('ss', $session_key, $user);
@@ -60,7 +63,8 @@ function doLogin($request): array {
                 'session_key' => $session_key,
                 'message' => 'login success.'
             ];
-        }
+	}
+	echo "there was no username like that";
         return [
             'status' => 'error',
             'session_key' => 'NULL',
@@ -68,7 +72,8 @@ function doLogin($request): array {
         ];
     }
     catch (Throwable $e) {
-        // catchall failure
+	    // catchall failure
+	echo "unexpected error";
         error_log('doLogin: ' . $e->getMessage());
         return [
             'status' => 'error',

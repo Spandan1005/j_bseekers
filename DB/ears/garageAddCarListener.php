@@ -39,6 +39,7 @@ function addCar($request): array {
         $stmt->bind_result($id);
         $fetched = $stmt->fetch();
         $stmt->close();
+	//echo "passed search for car\n";
 
         $stmt = $db->prepare("insert into cars (username, year, make, model) values (?,?,?,?)");
         $stmt->bind_param('siss', $user, $year, $make, $model);
@@ -46,10 +47,14 @@ function addCar($request): array {
         $stmt->close();
 
         if (!($fetched && isset($id)))  // added ! to reverse the condition
-        {
+	{
+		//echo "that ymm was not already in the table\n";
             refreshRecalls($db, $year, $make, $model);
             refreshComplaints($db, $year, $make, $model);
-        }
+	}
+	else {
+		//echo "that ymm was already in the table\n";
+	}
 
         // ^ checks if the earlier select statement found this car to exist already
         // if it does, leave it for the cron.  Andrew Galella 10.15.2026
