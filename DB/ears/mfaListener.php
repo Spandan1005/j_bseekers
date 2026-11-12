@@ -43,6 +43,7 @@ function doMFA($request): array {
         //echo "$email";
         if ($fetched && isset($id)) {
             $db2 = getDB();
+            $db2->begin_transaction();
             $stmt = $db2->prepare("delete from otps where username = ?");
             $stmt->bind_param('s', $user);
             $stmt->execute();
@@ -60,6 +61,7 @@ function doMFA($request): array {
             $stmt->bind_param('ss', $session_key, $user);
             $stmt->execute();
             $stmt->close();
+            $db2->commit(); // added code to make delete + update + insert atomic.  otherwise a failed update or insert makes the 2fa code get consumed for nothing
             $db2->close();
             return [
                 'status' => 'success',
@@ -67,6 +69,17 @@ function doMFA($request): array {
                 'message' => 'login success.'
             ];
         }
+        $db2 = getDB();
+        $stmt = $db2->prepare("update otps set attempts = attempts+1 where username = ?");
+        $stmt->bind_param('s', $user);
+        $stmt->execute();
+        $stmt->close();
+        $stmt = $db2->prepare("delete from otps where attempts >= 5 and username = ?");
+        $stmt->bind_param('s', $user);
+        $stmt->execute();
+        $stmt->close();
+        $db2->close();
+
         //echo "there was no username like that";
         return [
             'status' => 'error',
