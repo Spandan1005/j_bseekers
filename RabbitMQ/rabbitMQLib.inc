@@ -31,7 +31,7 @@ class rabbitMQServer
 	{
 		$this->machine = getHostInfo(array($machine));
 		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //SP 11/10
-		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
+		//$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
 
 		//$this->USER     = $this->machine[$server]["USER"];
 		//$this->PASSWORD = $this->machine[$server]["PASSWORD"];
@@ -45,6 +45,7 @@ class rabbitMQServer
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];
 		$this->BROKER_HOST = $creds['BROKER_HOST']; //added this in prior to db merge and changed it to localhost SP 11/10
+		$this->BROKER_PORT = $creds['BROKER_PORT']; // AG 11/12 trying to add SSL/TLS
 
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
@@ -186,7 +187,7 @@ class rabbitMQClient
 	{
 		$this->machine = getHostInfo(array($machine));
 		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //commented this out SP 11/10
-		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
+		//$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
 
 		//$this->USER     = $this->machine[$server]["USER"];
 		//$this->PASSWORD = $this->machine[$server]["PASSWORD"];
@@ -200,6 +201,7 @@ class rabbitMQClient
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];
 		$this->BROKER_HOST = $creds['BROKER_HOST']; //added in this line prior to db merge so it references localhost SP 11/10
+		$this->BROKER_PORT = $creds['BROKER_PORT']; // AG 11/12 trying to add SSL/TLS
 
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
