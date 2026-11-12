@@ -82,7 +82,7 @@ function doMFA($request): array {
 
         //echo "there was no username like that";
         return [
-            'status' => 'error',
+            'status' => 'invalid',
             'message' => 'Invalid code.'
         ];
     }
