@@ -16,7 +16,7 @@ $msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // when form is submitted
 	$otp = trim($_POST['otp']);
         
-        if ($!preg_match('/^[0-9]{6}$/', $otp)) { // 6 digit check
+        if (!preg_match('/^[0-9]{6}$/', $otp)) { // 6 digit check
 	    $msg = 'Enter the 6-digit code.';
         } else {
             $reply = send_request([ // sends code to DB
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // when form is submitted
                 header('Location: home.php');
                 exit;
             } elseif ($reply['status'] === 'invalid') { // wrong/expired code
-                $msg = 'Invalid code. 5 attempts remaining.';
+                $msg = 'Invalid code. You have 5 attempts in total.';
             } else {
                 $msg = 'Something went wrong. Go back to login.';
             }
@@ -47,13 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // when form is submitted
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Verify Code</title>
-  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
   <h3>Enter your OTP</h3>
-  <?php // links to main pages, only shown after login ?>
   <p>An email containing a 6-digit code has been sent to the email associated with your account.</p>
   <p>The code will expire after 5 minutes.</p>
   <form method="POST">
@@ -65,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // when form is submitted
   </form>
   <p><a href="login.php">Back to login</a></p>
   
-  <?php if ($msg): // for XSS prevention
+  <?php if ($msg): // for XSS prevention ?>
     <p><?= htmlspecialchars($msg) ?></p>
   <?php endif; ?>
 
