@@ -2,6 +2,17 @@
 
 require_once('get_host_info.inc');
 
+//adding in a TLS block to encorporate tls stuff - SP 11/12
+function applyTls(array $params) {
+	$creds = require __DIR__ . '/rabbitCreds.php'; //using same convetion to refer to rabbit creds to get MQ deets
+	if (!empty($creds['TLS_CA'])) { //applkying the TLS cert here
+		$params['port'] = 5671; //chanigng to port 5671
+		$params['cacert'] = $creds['TLS_CA']; //talkin about the CA as mentioned earlier thats issued through rabbit to all machines 
+		$params['verify'] = true;
+	}
+	return $params;
+}
+
 class rabbitMQServer
 {
 	private $machine = "";
@@ -81,7 +92,10 @@ class rabbitMQServer
       $params['login'] = $this->USER;
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
-			$conn = new AMQPConnection($params);
+
+      			//adding in for tls block SP 11/12
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 			$channel = new AMQPChannel($conn);
 			$exchange = new AMQPExchange($channel);
@@ -123,7 +137,10 @@ class rabbitMQServer
       $params['login'] = $this->USER;
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
-			$conn = new AMQPConnection($params);
+      			
+      			//adding in this for tls block
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 
 			$channel = new AMQPChannel($conn);
@@ -233,7 +250,9 @@ class rabbitMQClient
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
 
-			$conn = new AMQPConnection($params);
+      			//adding this line in as well for the tls block above SP 11/12
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 
 			$channel = new AMQPChannel($conn);
@@ -284,7 +303,10 @@ class rabbitMQClient
       $params['login'] = $this->USER;
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
-			$conn = new AMQPConnection($params);
+      			
+      			//adding this line in to correspond with the new Tls addition above SP 11/12
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 			$channel = new AMQPChannel($conn);
 			$exchange = new AMQPExchange($channel);
