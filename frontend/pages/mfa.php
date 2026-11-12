@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // when form is submitted
             $reply = send_request([ // sends code to DB
                 'type' => 'mfa',
                 'username' => $_SESSION['mfa_user'],
-                'otp' => (int)$otp,
+                'otp' => $otp,
             ]);
             if ($reply['status'] === 'success' && isset($reply['session_key'])) { // status and key check
 	        session_regenerate_id(true); // new session ID after login (same as login)
