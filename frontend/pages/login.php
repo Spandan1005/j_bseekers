@@ -19,11 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // only runs when form is submitted
 		    'username' => $username,
 		    'password' => $password,
 	    ]);
-	    if ($reply['status'] === 'success') {
-		    session_regenerate_id(true); // creates new session ID after login 
-		    $_SESSION['username'] = $username; 
-		    $_SESSION['session_key'] = $reply['session_key'];
-		    header('Location: home.php');
+	    if ($reply['status'] === 'success') { // 11.12: DB should email code, no login yet
+		    // session_regenerate_id(true); // creates new session ID after login 11.12
+		    // $_SESSION['username'] = $username; 11.12 
+		    // $_SESSION['session_key'] = $reply['session_key']; 11.12
+		    header('Location: mfa.php');
 		    exit;
 	    }
 	    $msg = 'Invalid username or password.'; // generic error message for user

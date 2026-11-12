@@ -10,6 +10,35 @@ if (empty($_SESSION['mfa_user'])) { // redirect if login unsuccessful
 	header('Location: login.php');
 	exit; // stops rest of the page from sending so home HTML is not visible on login
 }
+
+$msg = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { // when form is submitted
+	$otp = trim($_POST['otp']);
+        
+        if ($!preg_match('/^[0-9]{6}$/', $otp)) { // 6 digit check
+	    $msg = 'Enter the 6-digit code.';
+        } else {
+            $reply = send_request([ // sends code to DB
+                'type' => 'mfa',
+                'username' => $_SESSION['mfa_user'],
+                'otp' => (int)$otp,
+            ]);
+            if ($reply['status'] === 'success' && isset($reply['session_key'])) { // status and key check
+	        session_regenerate_id(true); // new session ID after login (same as login)
+                $_SESSION['username'] = $_SESSION['mfa_user'];
+                $_SESSION['session_key'] = $reply['session_key'];
+                unset($_SESSION['mfa_user']); // no need to keep storing if not in use
+                header('Location: home.php');
+                exit;
+            } elseif ($reply['status'] === 'invalid') { // wrong/expired code
+                $msg = 'Invalid code. 5 attempts remaining.';
+            } else {
+                $msg = 'Something went wrong. Go back to login.';
+            }
+        }
+}	
+	
 ?>
 
 <!DOCTYPE html>
