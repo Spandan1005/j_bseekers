@@ -2,6 +2,17 @@
 
 require_once('get_host_info.inc');
 
+//adding in a TLS block to encorporate tls stuff - SP 11/12
+function applyTls(array $params) {
+	$creds = require __DIR__ . '/rabbitCreds.php'; //using same convetion to refer to rabbit creds to get MQ deets
+	if (!empty($creds['TLS_CA'])) { //applkying the TLS cert here
+		$params['port'] = 5671; //chanigng to port 5671
+		$params['cacert'] = $creds['TLS_CA']; //talkin about the CA as mentioned earlier thats issued through rabbit to all machines 
+		$params['verify'] = true;
+	}
+	return $params;
+}
+
 class rabbitMQServer
 {
 	private $machine = "";
@@ -20,7 +31,7 @@ class rabbitMQServer
 	{
 		$this->machine = getHostInfo(array($machine));
 		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //SP 11/10
-		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
+		//$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
 
 		//$this->USER     = $this->machine[$server]["USER"];
 		//$this->PASSWORD = $this->machine[$server]["PASSWORD"];
@@ -34,6 +45,7 @@ class rabbitMQServer
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];
 		$this->BROKER_HOST = $creds['BROKER_HOST']; //added this in prior to db merge and changed it to localhost SP 11/10
+		$this->BROKER_PORT = $creds['BROKER_PORT']; // AG 11/12 trying to add SSL/TLS
 
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
@@ -81,7 +93,10 @@ class rabbitMQServer
       $params['login'] = $this->USER;
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
-			$conn = new AMQPConnection($params);
+
+      			//adding in for tls block SP 11/12
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 			$channel = new AMQPChannel($conn);
 			$exchange = new AMQPExchange($channel);
@@ -123,7 +138,10 @@ class rabbitMQServer
       $params['login'] = $this->USER;
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
-			$conn = new AMQPConnection($params);
+      			
+      			//adding in this for tls block
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 
 			$channel = new AMQPChannel($conn);
@@ -169,7 +187,7 @@ class rabbitMQClient
 	{
 		$this->machine = getHostInfo(array($machine));
 		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //commented this out SP 11/10
-		$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
+		//$this->BROKER_PORT   = $this->machine[$server]["BROKER_PORT"];
 
 		//$this->USER     = $this->machine[$server]["USER"];
 		//$this->PASSWORD = $this->machine[$server]["PASSWORD"];
@@ -183,6 +201,7 @@ class rabbitMQClient
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];
 		$this->BROKER_HOST = $creds['BROKER_HOST']; //added in this line prior to db merge so it references localhost SP 11/10
+		$this->BROKER_PORT = $creds['BROKER_PORT']; // AG 11/12 trying to add SSL/TLS
 
 		if (isset( $this->machine[$server]["EXCHANGE_TYPE"]))
 		{
@@ -233,7 +252,9 @@ class rabbitMQClient
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
 
-			$conn = new AMQPConnection($params);
+      			//adding this line in as well for the tls block above SP 11/12
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 
 			$channel = new AMQPChannel($conn);
@@ -284,7 +305,10 @@ class rabbitMQClient
       $params['login'] = $this->USER;
       $params['password'] = $this->PASSWORD;
       $params['vhost'] = $this->VHOST;
-			$conn = new AMQPConnection($params);
+      			
+      			//adding this line in to correspond with the new Tls addition above SP 11/12
+      			$params = applyTls($params);
+      			$conn = new AMQPConnection($params);
 			$conn->connect();
 			$channel = new AMQPChannel($conn);
 			$exchange = new AMQPExchange($channel);

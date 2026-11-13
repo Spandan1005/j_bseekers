@@ -18,7 +18,7 @@ if ($date > 0) {
 $dateText = date('m/d/Y', $date);
 }
 
-$body = "Hi,\n\n";
+$body = "Hi,$username\n\n";
 $body .= "A new recall has been issued for your $year $make $model:\n\n";
 $body .= "Campaign: $campaign\n";
 $body .= "Component: $component\n";

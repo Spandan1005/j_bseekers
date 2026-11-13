@@ -13,7 +13,8 @@ const MQ_ROUTES = [
 'get_models' => ['dmz.ini', 'dmzModels'],
 'refreshRecalls' => ['dmz.ini', 'dmzRecalls'],
 'refreshComplaints' => ['dmz.ini', 'dmzComplaints'],
-'recallEmail' => ['dmz.ini', 'dmzRecallEmail']
+'recallEmail' => ['dmz.ini', 'dmzRecallEmail'],
+'dmzMFA' => ['dmz.ini', 'dmzMFA']
 ];
 
 function mq_error($message) {
