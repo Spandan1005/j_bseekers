@@ -21,8 +21,9 @@ function doMFA($request): array {
     // make sure fields aren't empty below
 
 
-    if ($user === '' || $otp === '') {
-        return [
+    if ($user === '' || $otp === '') { 
+        //error_log('doMFA: all fields required', 3, "/home/snp85/error.log");
+	return [
             'status' => 'error',
             'message' => 'All field are required.'
         ];
@@ -79,7 +80,8 @@ function doMFA($request): array {
         $stmt->execute();
         $stmt->close();
         $db2->close();
-
+	
+        //error_log('doMFA: invalid code', 3, "/home/snp85/error.log");
         //echo "there was no username like that";
         return [
             'status' => 'invalid',
@@ -89,8 +91,9 @@ function doMFA($request): array {
     catch (Throwable $e) {
         // catchall failure
         //echo "unexpected error";
-        error_log('doMFA: ' . $e->getMessage());
-        return [
+        error_log('doMFA: ' . $e->getMessage(), 3, "/home/snp85/error.log");
+	
+	return [
             'status' => 'error',
             'message' => 'Unexpected error occurred.'
         ];
