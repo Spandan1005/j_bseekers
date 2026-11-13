@@ -16,7 +16,7 @@ return [$subject,$body];
 }
 
 function  mfa_handle($request){
-$username = trim ((string)(request['username'] ??''));
+$username = trim ((string)($request['username'] ??''));
 $email =trim((string)($request['email']?? ''));
 $otp = trim ((string)($request['otp']??'')); //kept it as string as u asked for Andrew
 
@@ -63,7 +63,11 @@ $mail->isHTML(false);
 $mail->Subject = $subject;
 $mail->Body = $body;
 $mail->send();
+$sent = 1;
 
+if ($sent ==1) {
+return mfa_handle("Email was sent");
+}
 } catch (Throwable $error) {
 // log the real reason on the DMZ server and keep going with the next person
 error_log('email_handle: one email failed: ' . $error->getMessage());
