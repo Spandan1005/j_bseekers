@@ -27,7 +27,7 @@ class rabbitMQServer
 	private $exchange_type = "topic";
 	private $auto_delete = false;
 
-	function __construct($machine, $server = "rabbitMQ")
+	function __construct($machine, $server = "rabbitMQ", $overrides = [])
 	{
 		$this->machine = getHostInfo(array($machine));
 		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //SP 11/10
@@ -41,6 +41,7 @@ class rabbitMQServer
 		// Andrew Galella - 10.1.2026					
 
 		$creds = require __DIR__ . '/rabbitCreds.php';
+		$creds = array_merge($creds, $overrides);
 		$this->USER = $creds['USER'];
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];
@@ -183,7 +184,7 @@ class rabbitMQClient
 	private $response_queue = array();
 	private $exchange_type = "topic";
 
-	function __construct($machine, $server = "rabbitMQ")
+	function __construct($machine, $server = "rabbitMQ", $overrides = [])
 	{
 		$this->machine = getHostInfo(array($machine));
 		//$this->BROKER_HOST   = $this->machine[$server]["BROKER_HOST"]; //commented this out SP 11/10
@@ -197,6 +198,7 @@ class rabbitMQClient
 		// Andrew Galella - 10.1.2026
 
 		$creds = require __DIR__ . '/rabbitCreds.php';
+		$creds = array_merge($creds, $overrides);
 		$this->USER = $creds['USER'];
 		$this->PASSWORD = $creds['PASSWORD'];
 		$this->VHOST = $creds['VHOST'];

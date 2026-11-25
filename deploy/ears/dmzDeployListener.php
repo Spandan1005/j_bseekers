@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// package deploymen listener.  listens on packageDeploy
+// package deploymen listener.  listens on dmzDeploy
 // Andrew Galella, written 11.24.2026
 
 
@@ -75,8 +75,8 @@ function deploy($request): array {
 
 // open and close listener
 
-$server = new rabbitMQServer("deploy.ini","packageDeploy");
-echo "package deployment Listener | UP | Listening to 'packageDeploy'..." .PHP_EOL;
+$server = new rabbitMQServer("deploy.ini","dmzDeploy");
+echo "package deployment Listener | UP | Listening to 'dmzDeploy'..." .PHP_EOL;
 $server->process_requests('deploy');
 echo "package deployment Listener | DN | Exiting...".PHP_EOL;
 exit();

@@ -16,6 +16,7 @@ const REPO = '/home/snp85/j_bseekers';
 const V_FILE = REPO . '/VERSION';
 const STORAGE = '/home/snp85/Downloads';
 const INSTALL = __DIR__ . '/../bin/install.sh';
+const CLUSTER = __DIR__ . '/../config/cluster.php';
 
 // ^^ SPANDAN check to make sure these are right for rabbit.
 
@@ -26,6 +27,74 @@ function getVersion(): int {
         return 0;
     }
     return (int)trim(file_get_contents(V_FILE));
+}
+
+
+function applyToSelf(int $version, string $file_path): array {
+    $cmd = escapeshellarg(INSTALL) . ' ' . escapeshellarg($file_path) . ' ' . escapeshellarg(REPO) . ' 2>&1';
+    exec($cmd, $out, $exitcode);
+    if ($exitcode !== 0)
+    {
+        error_log('deploy error for v' . $version . ': ' . implode("\n", $out));
+        return [
+            'status' => 'error',
+            'message' => "application of v$version failed, exit=$exitcode"
+        ];
+    }
+    file_put_contents(V_FILE, (string)$version);
+    return [
+        'status' => 'success'
+    ];
+}
+
+function applyToSiblings(int $version, string $checksum, string $file_path): array {
+    if (!is_file(CLUSTER))
+    {
+        'status' => 'error',
+        'message' => "cluster file not present"
+    }
+    $config = require CLUSTER;
+    $broker = $config['broker'];
+    $failures = array();
+
+    foreach ($config['siblings'] as $sibling)
+    {
+        $dest = $sibling['scp_user'] . '@' . $sibling['scp_host'] . ':' . $sibling['storage'] . '/';
+        $cmd = 'scp ' . escapeshellarg($file_path) . ' ' . escapeshellarg($dest);
+        exec($cmd . ' 2>&1', $out, $exit);
+        if ($exit !== 0)
+        {
+            $failures[] = $sibling['section'] . ' (scp fail)';
+            continue;
+        }
+        try {
+            $client = new rabbitMQClient('deploy.ini', $sibling['section'], $broker);
+            $reply = $client->send_request([
+                'version' => $version,
+                'checksum' => $checksum
+            ]);
+            if (!is_array($reply) || ($reply['status'] ?? '') !== 'success')
+            {
+                $failures[] = $sibling['section'] . ' ('. ($reply['message'] ?? 'bad reply') . ')';
+            }
+
+        }
+        catch (Throwable $e){
+            $failures[] = $sibling['section'] . ' (' . $e->getMessage() . ')'
+        }
+
+    }
+    if (empty($failures))
+    {
+        return [
+            'status' => 'success',
+            'message' => 'update distribiuted'
+        ];
+    }
+    return [
+        'status' => 'error',
+        'message' => 'distribution failures: ' . implode(', ', $failures)
+    ];
 }
 
 function deploy($request): array {
@@ -53,17 +122,23 @@ function deploy($request): array {
         ];
     }
 
-    $cmd = escapeshellarg(INSTALL) . ' ' . escapeshellarg($file_path) . ' ' . escapeshellarg(REPO) . ' 2>&1';
-    exec($cmd, $out, $exitcode);
-    if ($exitcode !== 0)
+    $local = applyToSelf($version, $file_path);
+    if ($local['status'] !== 'success')
     {
-        error_log('deploy error for v' . $version . ': ' . implode("\n", $out));
+        return $local;
+    }
+
+
+    $distrib = applyToSiblings($version, $checksum, $file_path);
+    if ($distrib['status'] !== 'success')
+    {
         return [
             'status' => 'error',
-            'message' => "application of v$version failed, exit=$exitcode"
+            'version' => '$version',
+            'message' => "hub updated to v$version, but " . $distrib['message']
         ];
     }
-    file_put_contents(V_FILE, (string)$version);
+
     return [
         'status' => 'success',
         'version' => $version,

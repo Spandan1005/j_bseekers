@@ -9,7 +9,7 @@ exclude="$here/../exclude.txt"
 
 if [[ -z "$tarball" || -z "$repo" ]];
 then
-    echo "usage: buildPackage.sh <tarball> <repo>" >&2
+    echo "usage: install.sh <tarball> <repo>" >&2
     exit 2
 fi
 
@@ -38,6 +38,8 @@ case "$repo_path" in
 esac
 
 temp="/tmp/j_bseekers"
+rm -rf "$temp"
+mkdir -p "$temp"
 tar -xzf "$tarball" -C "$temp"
 
 rsync -a --delete --exclude-from="$exclude" "$temp"/ "$repo"/
