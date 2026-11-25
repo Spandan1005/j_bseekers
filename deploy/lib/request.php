@@ -4,17 +4,11 @@
 
 
 //All te file paths to directory and the ini file - Spandan Patel 9/29/26
-const MQ_DIR = __DIR__ . '/../../RabbitMQ';
+const MQ_DIR = __DIR__ . '/../rabbit';
 
 //defining requests - Spandan Ptel 9/29/26
 const MQ_ROUTES = [
-'get_years' => ['dmz.ini', 'dmzYears'],
-'get_makes' => ['dmz.ini', 'dmzMakes'],
-'get_models' => ['dmz.ini', 'dmzModels'],
-'refreshRecalls' => ['dmz.ini', 'dmzRecalls'],
-'refreshComplaints' => ['dmz.ini', 'dmzComplaints'],
-'recallEmail' => ['dmz.ini', 'dmzRecallEmail'],
-'dmzMFA' => ['dmz.ini', 'dmzMFA']
+'deploy' => ['deploy.ini', 'packageDeploy']
 ];
 
 function mq_error($message) {
