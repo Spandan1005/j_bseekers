@@ -52,7 +52,7 @@ function checkSubmissions($request): array {
         // insert the new package as an untested entry in the database.
         $db = getDB();
         $stmt = $db->prepare("insert into packages (version, file_path, checksum) values (?, ?, ?)");
-        $stmt = $db->bind_param('iss', $version, $file_path, $checksum);
+        $stmt->bind_param('iss', $version, $file_path, $checksum);
         $stmt->execute();
         $stmt->close();
         $db->close();

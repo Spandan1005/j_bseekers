@@ -42,7 +42,7 @@ function getStatus(mysqli $db, int $version): ?string {
 
 
 function decide(mysqli $db, string $env, int $version): array {
-    if ($reported > 0)
+    if ($version > 0)
     {
         $current = getStatus($db, $version);
     }
@@ -109,4 +109,8 @@ function decide(mysqli $db, string $env, int $version): array {
             'message' => "there are no newer untested versions to push to qa"
         ];
     }
+    return [
+        'action' => 'none',
+        'message' => "no change needed"
+    ];
 }
