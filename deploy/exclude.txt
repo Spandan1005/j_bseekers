@@ -1,0 +1,14 @@
+/.git/
+VERSION
+*.swp
+/RabbitMQ/rabbitCreds.php
+/DB/config/
+/deploy/config/
+/deploy/rabbit/rabbitCreds.php
+/DB/cron/crontab.txt
+/frontend/lib/rabbitmq/testRabbitMQ.ini
+.env
+*.env
+vendor/
+*.log
+*.err
